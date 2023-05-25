@@ -1,16 +1,19 @@
-package hftm.blog;
+package hftm.blog.boundary;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
-@Path("/hello")
-public class GreetingResource {
+@Path("/blog")
+public class BlogResource {
 
     @GET
     @Produces(MediaType.TEXT_PLAIN)
-    public String hello() {
+    public String blog() {
         return "Hello from RESTEasy Reactive";
+        
+        
+        //Blog blog = new Blog("Title", "Content of the Blog");
     }
 }
