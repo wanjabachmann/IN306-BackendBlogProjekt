@@ -1,14 +1,17 @@
 package hftm.blog.entity;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,6 +30,10 @@ public class Blog {
     private String title;
     private String content;
 
+/*     @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "commend_id")
+    private List<Comment> comments;
+ */
     @ManyToMany
     @JoinTable(
         name = "Blog_Author",
