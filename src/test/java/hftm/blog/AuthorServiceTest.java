@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import hftm.blog.boundary.AuthorService;
+import hftm.blog.control.AuthorService;
 import hftm.blog.entity.Author;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;

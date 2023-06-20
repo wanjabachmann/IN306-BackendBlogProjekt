@@ -1,9 +1,8 @@
-package hftm.blog.boundary;
+package hftm.blog.control;
 
 import java.util.List;
 import org.jboss.logging.Logger;
 
-import hftm.blog.control.AuthorRepository;
 import hftm.blog.entity.Author;
 import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;
