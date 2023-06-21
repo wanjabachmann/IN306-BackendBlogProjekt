@@ -29,8 +29,18 @@ public class AuthorService {
     }
 
     @Transactional
-    public void removeAuthor(Author author){
+    public void removeAuthor(Author author) {
         logger.info("Remove author " + author.toString());
         authorRepository.delete(author);
+    }
+
+    @Transactional
+    public void removeAuthorById(Long id) {
+        logger.info("Try to remove author by Id: " + id);
+        Author author = authorRepository.findById(id);
+        if (author != null) {
+            authorRepository.delete(author);
+            logger.info("Removed authro by Id: " + id);
+        }
     }
 }

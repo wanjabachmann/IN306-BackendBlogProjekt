@@ -33,4 +33,15 @@ public class BlogService {
         logger.info("Removing blog " + blog.toString());
         blogRepository.delete(blog);
     }
+
+    // Remove by blog id
+    @Transactional
+    public void removeBlogById(Long id) {
+        logger.info("Try to remove Blog by Id: " + id);
+        Blog blog = blogRepository.findById(id);
+        if (blog != null) {
+            blogRepository.delete(blog);
+            logger.info("Removed Blog by Id: " + id);
+        }
+    }
 }

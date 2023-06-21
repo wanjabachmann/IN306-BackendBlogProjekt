@@ -45,7 +45,57 @@ You can then execute your native executable with: `./target/blog-1.0.0-SNAPSHOT-
 
 If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.
 
+
+# Manual Testing
+
+The swagger ui can be opened by the following link:
+http://localhost:8080/q/swagger-ui
+
+## httpie
+
+### Blogs
+Get all Blogs
+```Shell
+http :8080/blogs
+```
+
+Post Blogs
+```Shell
+http -v POST :8080/blogs title="Blog Title" content="This is a blog content"
+```
+
+Delete a Post by specify the id
+```Shell
+http -v DELETE :8080/blogs/1
+```
+
+### Authors
+Get Authors
+```Shell
+http -v GET :8080/blogs/authors
+```
+
+Post Authors
+```Shell
+http -v POST :8080/blogs/authors firstname="Wanja" lastname="Bachmann" 
+```
+
+Delete Authors
+```Shell
+http -v DELETE :8080/blogs/authors/1
+```
+
+
 # Changelog
+## New
+- feat: :sparkles: Implements the author anotations
+- style: :art: Removes unused imports
+- feat: :sparkles: adds the remove method to delete a Author by Id
+- feat: :sparkles: Adds the methods and anotations to the BlogResource
+- feat: :sparkles: Adds the removeBlogById method to be able to remove blogs
+- build: :heavy_plus_sign: Adds the dependency smallrye-openapi
+
+## Old
 - style: :truck: Moves all files one folder up to the main folder and move the services into the control package
 - docs: :memo: Updates the Changelog within  the README.md file
 - Merge pull request #1 from wanjabachmann/add_db_access
@@ -58,3 +108,6 @@ If you want to learn more about building native executables, please consult http
 - refactor: :fire: Removes unused files from previous tests and the default setup.
 - feat: Creates the Quarkus project and a first customization from the Projekt-Setup task in moodle
 - Initial commit
+
+# Stuff not working
+- I was not able to get the Author relationship working
