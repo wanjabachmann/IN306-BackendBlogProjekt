@@ -23,13 +23,14 @@ public class BlogResource {
     @Inject
     AuthorService authorService;
 
-    // Diese Methode ist über eine http-GET-Anfrage erreichbar.
+    /* 
+    Blog Entries 
+    */
     @GET
     public List<Blog> getEntries() {
         return this.blogService.getBlogs();
     }
 
-    // Diese Methode ist über eine http-POST-Anfrage erreichbar.
     @POST
     public void addBlog(Blog blog) {
         this.blogService.addBlog(blog);
@@ -42,14 +43,24 @@ public class BlogResource {
     }
 
 
-    // Author Section
-/*     @GET
+    /* 
+    Author Entries 
+    */
+    @GET
+    @Path("/authors")
     public List<Author> getAuthors() {
         return this.authorService.getAuthors();
-    } */
-
-/*     @POST
+    } 
+    
+    @POST
+    @Path("/authors")
     public void addAuthor (Author author){
         this.authorService.addAuthor(author);
-    } */
+    }
+
+    @DELETE
+    @Path("/authors/{id}")
+    public void removeAuthor(Long id){
+        this.authorService.removeAuthorById(id);
+    }
 }
