@@ -53,6 +53,7 @@ http://localhost:8080/q/swagger-ui
 
 ## httpie
 
+### Blogs
 Get all Blogs
 ```Shell
 http :8080/blogs
@@ -68,8 +69,28 @@ Delete a Post by specify the id
 http -v DELETE :8080/blogs/1
 ```
 
+### Authors
+Get Authors
+```Shell
+http -v GET :8080/blogs/authors
+```
+
+Post Authors
+```Shell
+http -v POST :8080/blogs/authors firstname="Wanja" lastname="Bachmann" 
+```
+
+Delete Authors
+```Shell
+http -v DELETE :8080/blogs/authors/1
+```
+
+
 # Changelog
 ## New
+- feat: :sparkles: Implements the author anotations
+- style: :art: Removes unused imports
+- feat: :sparkles: adds the remove method to delete a Author by Id
 - feat: :sparkles: Adds the methods and anotations to the BlogResource
 - feat: :sparkles: Adds the removeBlogById method to be able to remove blogs
 - build: :heavy_plus_sign: Adds the dependency smallrye-openapi
