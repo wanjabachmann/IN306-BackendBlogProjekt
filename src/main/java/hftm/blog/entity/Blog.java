@@ -1,5 +1,6 @@
 package hftm.blog.entity;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,6 +27,7 @@ public class Blog {
 
     private String title;
     private String content;
+    private LocalDate creationDate;
 
 /*     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "commend_id")
@@ -41,9 +43,10 @@ public class Blog {
 
 
     // Custom Constructor
-    public Blog(String title, String content){
+    public Blog(String title, String content, LocalDate creationDate){
         this.title = title;
         this.content = content;
+        this.creationDate = creationDate;
     }
 
 }   

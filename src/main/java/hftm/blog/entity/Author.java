@@ -1,5 +1,6 @@
 package hftm.blog.entity;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,15 +26,17 @@ public class Author {
 
     private String firstname;
     private String lastname;
+    private LocalDate creationDate;
 
     // authors --> Name of the Hashset on Blog.java
     @ManyToMany(mappedBy = "authors")
     private Set<Blog> blogs = new HashSet<>();
 
     // Custom Constructor
-    public Author(String firstname, String lastname) {
+    public Author(String firstname, String lastname, LocalDate creationDate) {
         this.firstname = firstname;
         this.lastname = lastname;
+        this.creationDate = creationDate;
     }
     
 }

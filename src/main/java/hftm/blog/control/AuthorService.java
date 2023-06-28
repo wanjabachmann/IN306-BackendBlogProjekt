@@ -22,6 +22,12 @@ public class AuthorService {
         return authors;
     }
 
+    public Author getAuthorById(Long id) {
+        var author = authorRepository.findById(id);
+        logger.info("Returning " + id);
+        return author;
+    }
+
     @Transactional
     public void addAuthor(Author author) {
         logger.info("Adding author " + author.getFirstname() + " " + author.getLastname());
@@ -32,6 +38,21 @@ public class AuthorService {
     public void removeAuthor(Author author) {
         logger.info("Remove author " + author.toString());
         authorRepository.delete(author);
+    }
+
+    @Transactional
+    public void updateAuthor(long id, Author updatedAuthor) {
+        logger.info("Update author " + id);
+        
+        Author author = authorRepository.findById(id);
+
+        if(author != null){
+            author.setFirstname(updatedAuthor.getFirstname());
+            author.setLastname(updatedAuthor.getLastname());
+            author.setBlogs(updatedAuthor.getBlogs());
+        } else {
+            logger.error("Author not found");
+        }
     }
 
     @Transactional

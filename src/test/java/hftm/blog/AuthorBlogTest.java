@@ -2,6 +2,8 @@ package hftm.blog;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.LocalDate;
+
 import org.junit.jupiter.api.Test;
 
 import hftm.blog.control.AuthorService;
@@ -23,8 +25,8 @@ public class AuthorBlogTest {
     @Test
     void addAuthorToBlog(){
         // Arrange
-        Blog blog = new Blog("addAuthorToBlog", "Blog from addAuthroToBlog Junit test.");
-        Author author = new Author("Christoph", "Meier");
+        Blog blog = new Blog("addAuthorToBlog", "Blog from addAuthroToBlog Junit test.", LocalDate.now());
+        Author author = new Author("Christoph", "Meier", LocalDate.now());
     
         // Act
         blog.getAuthors().add(author);
