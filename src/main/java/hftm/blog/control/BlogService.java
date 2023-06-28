@@ -22,6 +22,11 @@ public class BlogService {
         return blogs;
     }
 
+    public Blog getBlogById(Long id){
+        var blog = blogRepository.findById(id);
+        return blog;
+    }
+
     @Transactional
     public void addBlog(Blog blog) {
         logger.info("Adding blog " + blog.toString());
@@ -32,6 +37,21 @@ public class BlogService {
     public void removeBlog(Blog blog) {
         logger.info("Removing blog " + blog.toString());
         blogRepository.delete(blog);
+    }
+
+    @Transactional
+    public void updateBlog(Long Id, Blog updatedBlog){
+        logger.info("Update blog " + Id);
+        
+        Blog blog = blogRepository.findById(Id);
+
+        if(blog != null){
+            blog.setTitle(updatedBlog.getTitle());
+            blog.setContent(updatedBlog.getContent());
+            blog.setAuthors(updatedBlog.getAuthors());
+        } else {
+            logger.error("Blog not found");
+        }
     }
 
     // Remove by blog id
