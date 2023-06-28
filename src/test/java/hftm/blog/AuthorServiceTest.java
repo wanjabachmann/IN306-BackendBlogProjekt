@@ -1,6 +1,8 @@
 package hftm.blog;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.time.LocalDate;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -19,7 +21,7 @@ public class AuthorServiceTest {
     @Test
     void listingAndAddingAuthors() {
         // Arrange
-        Author author = new Author("Hans", "Müller");
+        Author author = new Author("Hans", "Müller",LocalDate.of(2021, 2, 1));
         int authorsBefore;
         List<Author> authors;
 
@@ -36,7 +38,7 @@ public class AuthorServiceTest {
     @Test
     void deleteAuthor(){
         // Arrange
-        Author author = new Author("Ueli", "Wagner");
+        Author author = new Author("Ueli", "Wagner", LocalDate.of(2022, 07, 01));
         int authorsBefore;
         authorService.addAuthor(author);
 
