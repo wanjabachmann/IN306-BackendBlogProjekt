@@ -2,6 +2,10 @@ package hftm.blog.boundary;
 
 import java.util.List;
 
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import hftm.blog.control.AuthorService;
 import hftm.blog.control.BlogService;
 import hftm.blog.entity.Author;
@@ -14,7 +18,7 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.Response;
 
 @Path("/")
 @ApplicationScoped
@@ -31,8 +35,21 @@ public class BlogResource {
      */
     @GET
     @Path("authors")
-    public List<Author> getAuthors() {
-        return this.authorService.getAuthors();
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Query successful", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Author.class))),
+            @APIResponse(responseCode = "404", description = "No authors found")
+    })
+    public Response getAuthors() {
+        List<Author> authors = authorService.getAuthors();
+        if (authors != null && !authors.isEmpty()) {
+            return Response.status(Response.Status.OK)
+                    .entity(authors)
+                    .build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("No authors found")
+                    .build();
+        }
     }
 
     @POST
@@ -41,9 +58,21 @@ public class BlogResource {
         this.authorService.addAuthor(author);
     }
 
+    @GET
+    @Path("authors/{id}")
+    public Author getAuthorById(@PathParam("id") Long Id) {
+        return this.authorService.getAuthorById(Id);
+    }
+
+    @PUT
+    @Path("authors/{id}")
+    public void updateAuthor(@PathParam("id") long id, Author updatedAuthor) {
+        this.authorService.updateAuthor(id, updatedAuthor);
+    }
+
     @DELETE
     @Path("authors/{id}")
-    public void removeAuthor(Long id) {
+    public void removeAuthor(@PathParam("id") Long id) {
         this.authorService.removeAuthorById(id);
     }
 
@@ -52,7 +81,7 @@ public class BlogResource {
      */
     @GET
     @Path("blogs")
-    public List<Blog> getEntries(@QueryParam("name") String search) {
+    public List<Blog> getEntries() {
         return this.blogService.getBlogs();
     }
 
@@ -64,7 +93,7 @@ public class BlogResource {
 
     @GET
     @Path("blogs/{id}")
-    public Blog getBlog(Long id) {
+    public Blog getBlog(@PathParam("id") Long id) {
         return this.blogService.getBlogById(id);
     }
 
@@ -76,7 +105,7 @@ public class BlogResource {
 
     @DELETE
     @Path("blogs/{id}")
-    public void removeBlog(Long id) {
+    public void removeBlog(@PathParam("id") Long id) {
         this.blogService.removeBlogById(id);
     }
 }
