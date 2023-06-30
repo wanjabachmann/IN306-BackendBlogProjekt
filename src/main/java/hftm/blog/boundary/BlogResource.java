@@ -6,6 +6,8 @@ import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+
 import hftm.blog.control.AuthorService;
 import hftm.blog.control.BlogService;
 import hftm.blog.entity.Author;
@@ -34,6 +36,7 @@ public class BlogResource {
      * Author Entries
      */
     @GET
+    @Tag(name = "Authors")
     @Path("authors")
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Query successful", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Author.class))),
@@ -53,24 +56,28 @@ public class BlogResource {
     }
 
     @POST
+    @Tag(name = "Authors")
     @Path("authors")
     public void addAuthor(Author author) {
         this.authorService.addAuthor(author);
     }
 
     @GET
+    @Tag(name = "Authors")
     @Path("authors/{id}")
     public Author getAuthorById(@PathParam("id") Long Id) {
         return this.authorService.getAuthorById(Id);
     }
 
     @PUT
+    @Tag(name = "Authors")
     @Path("authors/{id}")
     public void updateAuthor(@PathParam("id") long id, Author updatedAuthor) {
         this.authorService.updateAuthor(id, updatedAuthor);
     }
 
     @DELETE
+    @Tag(name = "Authors")
     @Path("authors/{id}")
     public void removeAuthor(@PathParam("id") Long id) {
         this.authorService.removeAuthorById(id);
@@ -80,30 +87,35 @@ public class BlogResource {
      * Blog Entries
      */
     @GET
+    @Tag(name = "Blogs")
     @Path("blogs")
     public List<Blog> getEntries() {
         return this.blogService.getBlogs();
     }
 
     @POST
+    @Tag(name = "Blogs")
     @Path("blogs")
     public void addBlog(Blog blog) {
         this.blogService.addBlog(blog);
     }
 
     @GET
+    @Tag(name = "Blogs")
     @Path("blogs/{id}")
     public Blog getBlog(@PathParam("id") Long id) {
         return this.blogService.getBlogById(id);
     }
 
     @PUT
+    @Tag(name = "Blogs")
     @Path("blogs/{id}")
     public void updateBlog(@PathParam("id") long id, Blog updatedBlog) {
         this.blogService.updateBlog(id, updatedBlog);
     }
 
     @DELETE
+    @Tag(name = "Blogs")
     @Path("blogs/{id}")
     public void removeBlog(@PathParam("id") Long id) {
         this.blogService.removeBlogById(id);
