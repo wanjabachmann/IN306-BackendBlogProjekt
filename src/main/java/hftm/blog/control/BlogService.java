@@ -22,7 +22,13 @@ public class BlogService {
         return blogs;
     }
 
-    public Blog getBlogById(Long id){
+    public List<Blog> findBlogs(String searchString) {
+        var blogs = blogRepository.find("title like ?1 or content like ?1", "%" + searchString + "%").list();
+        logger.info("Found " + blogs.size() + " blogs");
+        return blogs;
+    }
+
+    public Blog getBlogById(Long id) {
         var blog = blogRepository.findById(id);
         return blog;
     }
@@ -40,12 +46,12 @@ public class BlogService {
     }
 
     @Transactional
-    public void updateBlog(Long Id, Blog updatedBlog){
+    public void updateBlog(Long Id, Blog updatedBlog) {
         logger.info("Update blog " + Id);
-        
+
         Blog blog = blogRepository.findById(Id);
 
-        if(blog != null){
+        if (blog != null) {
             blog.setTitle(updatedBlog.getTitle());
             blog.setContent(updatedBlog.getContent());
             blog.setAuthors(updatedBlog.getAuthors());

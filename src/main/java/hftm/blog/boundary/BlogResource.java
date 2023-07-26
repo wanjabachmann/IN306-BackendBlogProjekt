@@ -20,6 +20,7 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
 
 @Path("/")
@@ -42,8 +43,15 @@ public class BlogResource {
             @APIResponse(responseCode = "200", description = "Query successful", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Author.class))),
             @APIResponse(responseCode = "404", description = "No authors found")
     })
-    public Response getAuthors() {
-        List<Author> authors = authorService.getAuthors();
+    public Response getAuthors(@QueryParam("search") String search) {
+        List<Author> authors = null;
+
+        if(search == null || search.isBlank()){
+            authors = authorService.getAuthors();
+        }else{
+            authors = authorService.findAuthors(search);
+        }
+
         if (authors != null && !authors.isEmpty()) {
             return Response.status(Response.Status.OK)
                     .entity(authors)
@@ -89,8 +97,13 @@ public class BlogResource {
     @GET
     @Tag(name = "Blogs")
     @Path("blogs")
-    public List<Blog> getEntries() {
-        return this.blogService.getBlogs();
+    public List<Blog> getEntries(@QueryParam("search") String search) {
+        if(search == null || search.isBlank()){
+            return this.blogService.getBlogs();
+        }else{
+            return this.blogService.findBlogs(search);
+        }
+        
     }
 
     @POST
@@ -103,7 +116,7 @@ public class BlogResource {
     @GET
     @Tag(name = "Blogs")
     @Path("blogs/{id}")
-    public Blog getBlog(@PathParam("id") Long id) {
+    public Blog getBlog(@QueryParam("id") Long id) {
         return this.blogService.getBlogById(id);
     }
 

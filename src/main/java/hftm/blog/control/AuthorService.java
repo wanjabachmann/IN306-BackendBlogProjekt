@@ -22,6 +22,12 @@ public class AuthorService {
         return authors;
     }
 
+    public List<Author> findAuthors(String searchString){
+        var authors = authorRepository.find("firstname like ?1 or lastname like ?1", "%" + searchString + "%").list();
+        logger.info("Found " + authors.size() + " blogs");
+        return authors;
+    }
+
     public Author getAuthorById(Long id) {
         var author = authorRepository.findById(id);
         logger.info("Returning " + id);
