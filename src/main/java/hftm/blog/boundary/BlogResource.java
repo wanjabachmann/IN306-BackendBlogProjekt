@@ -21,7 +21,10 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriInfo;
+import jakarta.ws.rs.core.Response.Status;
 
 @Path("/")
 @ApplicationScoped
@@ -46,9 +49,9 @@ public class BlogResource {
     public Response getAuthors(@QueryParam("search") String search) {
         List<Author> authors = null;
 
-        if(search == null || search.isBlank()){
+        if (search == null || search.isBlank()) {
             authors = authorService.getAuthors();
-        }else{
+        } else {
             authors = authorService.findAuthors(search);
         }
 
@@ -58,7 +61,7 @@ public class BlogResource {
                     .build();
         } else {
             return Response.status(Response.Status.NOT_FOUND)
-                    .entity("No authors found")
+                    .entity("No Authors found")
                     .build();
         }
     }
@@ -66,29 +69,73 @@ public class BlogResource {
     @POST
     @Tag(name = "Authors")
     @Path("authors")
-    public void addAuthor(Author author) {
+    public Response addAuthor(Author author, @Context UriInfo uriInfo) {
         this.authorService.addAuthor(author);
+
+        // Status 201 created + Path to created resource
+        var uri = uriInfo.getAbsolutePathBuilder().path(Long.toString((author.getId()))).build();
+        return Response.created(uri).build();
     }
 
     @GET
     @Tag(name = "Authors")
     @Path("authors/{id}")
-    public Author getAuthorById(@PathParam("id") Long Id) {
-        return this.authorService.getAuthorById(Id);
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Author found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Author.class))),
+            @APIResponse(responseCode = "404", description = "Author not found")
+    })
+    public Response getAuthorById(@PathParam("id") Long id) {
+        Author author = this.authorService.getAuthorById(id);
+        if (author == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Author not found")
+                    .build();
+        } else {
+            return Response.status(Response.Status.OK)
+                    .entity(author)
+                    .build();
+        }
     }
 
     @PUT
     @Tag(name = "Authors")
     @Path("authors/{id}")
-    public void updateAuthor(@PathParam("id") long id, Author updatedAuthor) {
-        this.authorService.updateAuthor(id, updatedAuthor);
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Author updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Author.class))),
+            @APIResponse(responseCode = "404", description = "Author not found")
+    })
+    public Response updateAuthor(@PathParam("id") long id, Author updatedAuthor) {
+        Author author = this.authorService.getAuthorById(id);
+
+        // Check if Author exist before modify
+        if (author == null) {
+            return Response.status(Status.NOT_FOUND)
+                    .entity("Author not found")
+                    .build();
+        } else {
+            this.authorService.updateAuthor(id, updatedAuthor);
+            return Response.status(Response.Status.OK)
+                    .entity(author)
+                    .build();
+        }
     }
 
     @DELETE
     @Tag(name = "Authors")
     @Path("authors/{id}")
-    public void removeAuthor(@PathParam("id") Long id) {
-        this.authorService.removeAuthorById(id);
+    public Response removeAuthor(@PathParam("id") Long id) {
+        Author author = this.authorService.getAuthorById(id);
+
+        if (author == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Author not found")
+                    .build();
+        } else {
+            this.authorService.removeAuthorById(id);
+
+            return Response.status(Response.Status.NO_CONTENT)
+                    .build();
+        }
     }
 
     /*
@@ -97,40 +144,98 @@ public class BlogResource {
     @GET
     @Tag(name = "Blogs")
     @Path("blogs")
-    public List<Blog> getEntries(@QueryParam("search") String search) {
-        if(search == null || search.isBlank()){
-            return this.blogService.getBlogs();
-        }else{
-            return this.blogService.findBlogs(search);
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Query successful", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Blog.class))),
+            @APIResponse(responseCode = "404", description = "No Blogs found")
+    })
+    public Response getEntries(@QueryParam("search") String search) {
+        List<Blog> blogs = null;
+
+        if (search == null || search.isBlank()) {
+            blogs = this.blogService.getBlogs();
+        } else {
+            blogs = this.blogService.findBlogs(search);
         }
-        
+
+        if (blogs != null && !blogs.isEmpty()) {
+            return Response.status(Response.Status.OK)
+                    .entity(blogs)
+                    .build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("No blogs found")
+                    .build();
+        }
     }
 
     @POST
     @Tag(name = "Blogs")
     @Path("blogs")
-    public void addBlog(Blog blog) {
+    public Response addBlog(Blog blog, @Context UriInfo uriInfo) {
         this.blogService.addBlog(blog);
+
+        // Status 201 created + Path to created resource
+        var uri = uriInfo.getAbsolutePathBuilder().path(Long.toString((blog.getId()))).build();
+        return Response.created(uri).build();
     }
 
     @GET
     @Tag(name = "Blogs")
     @Path("blogs/{id}")
-    public Blog getBlog(@QueryParam("id") Long id) {
-        return this.blogService.getBlogById(id);
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Blog found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Blog.class))),
+            @APIResponse(responseCode = "404", description = "Blog not found")
+    })
+    public Response getBlog(@PathParam("id") Long id) {
+        Blog blog = this.blogService.getBlogById(id);
+        if (blog == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Blog not found")
+                    .build();
+        } else {
+            return Response.status(Response.Status.OK)
+                    .entity(blog)
+                    .build();
+        }
     }
 
     @PUT
     @Tag(name = "Blogs")
     @Path("blogs/{id}")
-    public void updateBlog(@PathParam("id") long id, Blog updatedBlog) {
-        this.blogService.updateBlog(id, updatedBlog);
+    public Response updateBlog(@PathParam("id") long id, Blog updatedBlog) {
+        Blog blog = this.blogService.getBlogById(id);
+
+        // Check if Blog exist before modify
+        if (blog == null) {
+            return Response.status(Status.NOT_FOUND)
+                    .entity("Blog not found")
+                    .build();
+        } else {
+            this.blogService.updateBlog(id, updatedBlog);
+            return Response.status(Response.Status.OK)
+                    .entity(blog)
+                    .build();
+        }
     }
 
     @DELETE
     @Tag(name = "Blogs")
     @Path("blogs/{id}")
-    public void removeBlog(@PathParam("id") Long id) {
-        this.blogService.removeBlogById(id);
+    @APIResponses(value = {
+            @APIResponse(responseCode = "204", description = "Blog removed successfully"),
+            @APIResponse(responseCode = "404", description = "Blog not found")
+    })
+    public Response removeBlog(@PathParam("id") Long id) {
+        Blog blog = this.blogService.getBlogById(id);
+
+        if (blog == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Blog not found")
+                    .build();
+        } else {
+            this.blogService.removeBlogById(id);
+            return Response.status(Response.Status.NO_CONTENT)
+                    .build();
+        }
     }
 }
