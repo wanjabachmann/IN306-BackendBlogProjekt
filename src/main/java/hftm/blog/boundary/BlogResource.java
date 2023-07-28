@@ -10,10 +10,13 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import hftm.blog.control.AuthorService;
 import hftm.blog.control.BlogService;
+import hftm.blog.control.CommentService;
 import hftm.blog.entity.Author;
 import hftm.blog.entity.Blog;
+import hftm.blog.entity.Comment;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -35,6 +38,9 @@ public class BlogResource {
 
     @Inject
     BlogService blogService;
+
+    @Inject
+    CommentService commentService;
 
     /*
      * Author Entries
@@ -234,6 +240,81 @@ public class BlogResource {
                     .build();
         } else {
             this.blogService.removeBlogById(id);
+            return Response.status(Response.Status.NO_CONTENT)
+                    .build();
+        }
+    }
+
+    /*
+     * Comment Entries
+     */
+    @GET
+    @Tag(name = "Comments")
+    @Path("blogs/{id}/comments")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "Query successful", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Comment.class))),
+            @APIResponse(responseCode = "404", description = "No comments found")
+    })
+    public Response getComments() {
+        List<Comment> comments = commentService.getComments();
+
+        if (comments != null && !comments.isEmpty()) {
+            return Response.status(Response.Status.OK)
+                    .entity(comments)
+                    .build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("No comments found")
+                    .build();
+        }
+    }
+
+    @POST
+    @Tag(name = "Comments")
+    @Path("blogs/{id}/comments")
+    @Transactional
+    public Response addComment(@PathParam("id") Long blogId, Comment comment) {
+        Blog blog = blogService.getBlogById(blogId);
+        if (blog != null) {
+            comment.setBlog(blog);
+            commentService.addComment(comment);
+            return Response.status(Response.Status.CREATED).entity(comment).build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+    }
+
+    @PUT
+    @Tag(name = "Comments")
+    @Path("blogs/comments/{id}")
+    public Response updateComment(@PathParam("id") Long id, Comment updatedComment) {
+        if (updatedComment == null) {
+            return Response.status(Status.BAD_REQUEST)
+                    .entity("Updated Comment object cannot be null")
+                    .build();
+        } else {
+            commentService.updateComment(id, updatedComment);
+
+            return Response.status(Response.Status.OK)
+                    .build();
+        }
+    }
+
+    @DELETE
+    @Tag(name = "Comments")
+    @Path("blogs/comments/{id}")
+    @APIResponses(value = {
+            @APIResponse(responseCode = "204", description = "Comment removed successfully"),
+            @APIResponse(responseCode = "404", description = "Comment not found")
+    })
+    public Response removeComment(@PathParam("id") Long id) {
+        if (id == null) {
+            return Response.status(Status.BAD_REQUEST)
+                    .entity("Comment ID cannot be null")
+                    .build();
+        } else {
+            commentService.removeCommentById(id);
+
             return Response.status(Response.Status.NO_CONTENT)
                     .build();
         }
