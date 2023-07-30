@@ -17,6 +17,7 @@ import hftm.blog.entity.Comment;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -75,7 +76,7 @@ public class BlogResource {
     @POST
     @Tag(name = "Authors")
     @Path("authors")
-    public Response addAuthor(Author author, @Context UriInfo uriInfo) {
+    public Response addAuthor(@Valid Author author, @Context UriInfo uriInfo) {
         this.authorService.addAuthor(author);
 
         // Status 201 created + Path to created resource
@@ -110,7 +111,7 @@ public class BlogResource {
             @APIResponse(responseCode = "200", description = "Author updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Author.class))),
             @APIResponse(responseCode = "404", description = "Author not found")
     })
-    public Response updateAuthor(@PathParam("id") long id, Author updatedAuthor) {
+    public Response updateAuthor(@PathParam("id") long id, @Valid Author updatedAuthor) {
         Author author = this.authorService.getAuthorById(id);
 
         // Check if Author exist before modify

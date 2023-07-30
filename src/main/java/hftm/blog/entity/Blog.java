@@ -34,7 +34,9 @@ public class Blog {
     @NotBlank
     @Size(min = 3, max = 30, message = "Title must be between 3 and 30 characters long")
     private String title;
+    @NotBlank
     private String content;
+    
     private LocalDate creationDate;
 
     /*

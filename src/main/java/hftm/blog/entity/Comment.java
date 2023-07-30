@@ -2,10 +2,6 @@ package hftm.blog.entity;
 
 import java.time.LocalDate;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,6 +29,7 @@ public class Comment {
     @Size(min = 10, max = 100, message = "Comment must be between 10 and 100 characters long")
     private String content;
 
+    @NotBlank
     private String creator;
     private LocalDate creationDate;
 
