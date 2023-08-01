@@ -11,6 +11,11 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import hftm.blog.control.AuthorService;
 import hftm.blog.control.BlogService;
 import hftm.blog.control.CommentService;
+import hftm.blog.control.dto.BlogDtos;
+import hftm.blog.control.dto.CommentDtos;
+import hftm.blog.control.dto.AuthorDtos.AddAuthorDto;
+import hftm.blog.control.dto.AuthorDtos.UpdateAuthorDto;
+import hftm.blog.control.dto.CommentDtos.AddCommentDto;
 import hftm.blog.entity.Author;
 import hftm.blog.entity.Blog;
 import hftm.blog.entity.Comment;
@@ -76,11 +81,11 @@ public class BlogResource {
     @POST
     @Tag(name = "Authors")
     @Path("authors")
-    public Response addAuthor(@Valid Author author, @Context UriInfo uriInfo) {
-        this.authorService.addAuthor(author);
+    public Response addAuthor(@Valid AddAuthorDto authorDto, @Context UriInfo uriInfo) {
+        this.authorService.addAuthor(authorDto);
 
         // Status 201 created + Path to created resource
-        var uri = uriInfo.getAbsolutePathBuilder().path(Long.toString((author.getId()))).build();
+        var uri = uriInfo.getAbsolutePathBuilder().path(Long.toString((authorDto.id()))).build();
         return Response.created(uri).build();
     }
 
@@ -111,7 +116,7 @@ public class BlogResource {
             @APIResponse(responseCode = "200", description = "Author updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Author.class))),
             @APIResponse(responseCode = "404", description = "Author not found")
     })
-    public Response updateAuthor(@PathParam("id") long id, @Valid Author updatedAuthor) {
+    public Response updateAuthor(@PathParam("id") long id, @Valid UpdateAuthorDto updatedAuthorDto) {
         Author author = this.authorService.getAuthorById(id);
 
         // Check if Author exist before modify
@@ -120,7 +125,7 @@ public class BlogResource {
                     .entity("Author not found")
                     .build();
         } else {
-            this.authorService.updateAuthor(id, updatedAuthor);
+            this.authorService.updateAuthor(id, updatedAuthorDto);
             return Response.status(Response.Status.OK)
                     .entity(author)
                     .build();
@@ -178,11 +183,11 @@ public class BlogResource {
     @POST
     @Tag(name = "Blogs")
     @Path("blogs")
-    public Response addBlog(Blog blog, @Context UriInfo uriInfo) {
-        this.blogService.addBlog(blog);
+    public Response addBlog(BlogDtos.AddBlogDto newBlogDto, @Context UriInfo uriInfo) {
+        var id = this.blogService.addBlogDto(newBlogDto);
 
         // Status 201 created + Path to created resource
-        var uri = uriInfo.getAbsolutePathBuilder().path(Long.toString((blog.getId()))).build();
+        var uri = uriInfo.getAbsolutePathBuilder().path(Long.toString(id)).build();
         return Response.created(uri).build();
     }
 
@@ -209,7 +214,7 @@ public class BlogResource {
     @PUT
     @Tag(name = "Blogs")
     @Path("blogs/{id}")
-    public Response updateBlog(@PathParam("id") long id, Blog updatedBlog) {
+    public Response updateBlog(@PathParam("id") long id, BlogDtos.UpdateBlogDto updatedBlogDto) {
         Blog blog = this.blogService.getBlogById(id);
 
         // Check if Blog exist before modify
@@ -218,7 +223,7 @@ public class BlogResource {
                     .entity("Blog not found")
                     .build();
         } else {
-            this.blogService.updateBlog(id, updatedBlog);
+            this.blogService.updateBlogDto(id, updatedBlogDto);
             return Response.status(Response.Status.OK)
                     .entity(blog)
                     .build();
@@ -274,12 +279,11 @@ public class BlogResource {
     @Tag(name = "Comments")
     @Path("blogs/{id}/comments")
     @Transactional
-    public Response addComment(@PathParam("id") Long blogId, Comment comment) {
+    public Response addComment(@PathParam("id") Long blogId, AddCommentDto commentDto) {
         Blog blog = blogService.getBlogById(blogId);
         if (blog != null) {
-            comment.setBlog(blog);
-            commentService.addComment(comment);
-            return Response.status(Response.Status.CREATED).entity(comment).build();
+            commentService.addCommentDto(blogId,commentDto);
+            return Response.status(Response.Status.CREATED).entity(commentDto).build();
         } else {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -288,13 +292,13 @@ public class BlogResource {
     @PUT
     @Tag(name = "Comments")
     @Path("blogs/comments/{id}")
-    public Response updateComment(@PathParam("id") Long id, Comment updatedComment) {
-        if (updatedComment == null) {
+    public Response updateCommentDto(@PathParam("id") Long id, CommentDtos.UpdateCommentDto updatedCommentDto) {
+        if (updatedCommentDto == null) {
             return Response.status(Status.BAD_REQUEST)
                     .entity("Updated Comment object cannot be null")
                     .build();
         } else {
-            commentService.updateComment(id, updatedComment);
+            commentService.updateCommentDto(id, updatedCommentDto);
 
             return Response.status(Response.Status.OK)
                     .build();
