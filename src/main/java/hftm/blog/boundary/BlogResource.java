@@ -82,10 +82,10 @@ public class BlogResource {
     @Tag(name = "Authors")
     @Path("authors")
     public Response addAuthor(@Valid AddAuthorDto authorDto, @Context UriInfo uriInfo) {
-        this.authorService.addAuthor(authorDto);
+        var id = this.authorService.addAuthor(authorDto);
 
         // Status 201 created + Path to created resource
-        var uri = uriInfo.getAbsolutePathBuilder().path(Long.toString((authorDto.id()))).build();
+        var uri = uriInfo.getAbsolutePathBuilder().path(Long.toString((id))).build();
         return Response.created(uri).build();
     }
 

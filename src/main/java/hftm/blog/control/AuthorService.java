@@ -37,10 +37,11 @@ public class AuthorService {
     }
 
     @Transactional
-    public void addAuthor(AddAuthorDto authorDto) {
+    public Long addAuthor(AddAuthorDto authorDto) {
         logger.info("Adding author " + authorDto.firstname() + " " + authorDto.lastname());
         var author = authorDto.toAuthor();
         authorRepository.persist(author);
+        return author.getId();
     }
 
     @Transactional

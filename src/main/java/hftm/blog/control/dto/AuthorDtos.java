@@ -8,7 +8,7 @@ import jakarta.validation.Valid;
 public class AuthorDtos {
 
     @Valid
-    public record AddAuthorDto(Long id, String firstname, String lastname) {
+    public record AddAuthorDto(String firstname, String lastname) {
         public Author toAuthor() {
             return new Author(firstname, lastname, LocalDate.now());
         }
