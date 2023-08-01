@@ -3,6 +3,8 @@ package hftm.blog.control;
 import java.util.List;
 import org.jboss.logging.Logger;
 
+import hftm.blog.control.dto.BlogDtos.AddBlogDto;
+import hftm.blog.control.dto.BlogDtos.UpdateBlogDto;
 import hftm.blog.entity.Blog;
 import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;
@@ -34,9 +36,11 @@ public class BlogService {
     }
 
     @Transactional
-    public void addBlog(Blog blog) {
-        logger.info("Adding blog " + blog.toString());
+    public long addBlogDto(AddBlogDto blogDto) {
+        logger.info("Adding blog " + blogDto.title());
+        var blog = blogDto.toBlog();
         blogRepository.persist(blog);
+        return blog.getId();
     }
 
     @Transactional
@@ -46,15 +50,15 @@ public class BlogService {
     }
 
     @Transactional
-    public void updateBlog(Long Id, Blog updatedBlog) {
+    public void updateBlogDto(Long Id, UpdateBlogDto updatedBlogDto) {
         logger.info("Update blog " + Id);
 
         Blog blog = blogRepository.findById(Id);
 
         if (blog != null) {
-            blog.setTitle(updatedBlog.getTitle());
-            blog.setContent(updatedBlog.getContent());
-            blog.setAuthors(updatedBlog.getAuthors());
+            blog.setTitle(updatedBlogDto.title());
+            blog.setContent(updatedBlogDto.content());
+            blog.setAuthors(updatedBlogDto.author());
         } else {
             logger.error("Blog not found");
         }

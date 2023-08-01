@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import io.smallrye.common.constraint.NotNull;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -36,7 +38,7 @@ public class Blog {
     private String title;
     @NotBlank
     private String content;
-    
+
     private LocalDate creationDate;
 
     /*
@@ -45,6 +47,7 @@ public class Blog {
      * @JoinColumn(name = "commend_id")
      * private List<Comment> comments;
      */
+    @NotNull
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "Blog_Author", joinColumns = { @JoinColumn(name = "author_id") }, inverseJoinColumns = {
             @JoinColumn(name = "blog_id") })
@@ -55,10 +58,11 @@ public class Blog {
     private List<Comment> comments;
 
     // Custom Constructor
-    public Blog(String title, String content, LocalDate creationDate) {
+    public Blog(String title, String content, LocalDate creationDate, Set<Author> authors) {
         this.title = title;
         this.content = content;
         this.creationDate = creationDate;
+        this.authors = authors;
     }
 
 }
