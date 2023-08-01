@@ -1,5 +1,8 @@
 package hftm.blog.control;
 
+import hftm.blog.control.dto.CommentDtos.AddCommentDto;
+import hftm.blog.control.dto.CommentDtos.UpdateCommentDto;
+import hftm.blog.entity.Blog;
 import hftm.blog.entity.Comment;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -34,21 +37,31 @@ public class CommentService {
     }
 
     @Transactional
-    public void addComment(Comment comment) {
-        logger.info("Adding comment: " + comment.toString());
-        comment.setCreationDate(LocalDate.now());
-        commentRepository.persist(comment);
+    public void addCommentDto(Long blogId, AddCommentDto commentDto) {
+        logger.info("Adding comment: " + commentDto.toString());
+        Blog blog = blogRepository.findById(blogId);
+        if (blog != null) {
+            Comment comment = new Comment();
+            comment.setContent(commentDto.content());
+            comment.setCreationDate(LocalDate.now());
+            comment.setCreator(commentDto.creator());
+            comment.setBlog(blog);
+            commentRepository.persist(comment);
+        } else {
+            logger.error("Blog not found");
+        }
     }
 
     @Transactional
-    public void updateComment(Long id, Comment updatedComment) {
+    public void updateCommentDto(Long id, UpdateCommentDto updatedCommentDto) {
         Comment comment = commentRepository.findById(id);
         if (comment != null) {
             logger.info("Update Comment: " + id);
-            comment.setContent(updatedComment.getContent());
+            comment.setContent(updatedCommentDto.content());
+            comment.setCreator(updatedCommentDto.creator());
             commentRepository.persist(comment);
         } else {
-            logger.error("Comment not found");
+            logger.error("Blog not found");
         }
     }
 
