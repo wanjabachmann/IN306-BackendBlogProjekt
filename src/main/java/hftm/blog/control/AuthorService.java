@@ -3,6 +3,8 @@ package hftm.blog.control;
 import java.util.List;
 import org.jboss.logging.Logger;
 
+import hftm.blog.control.dto.AuthorDtos.AddAuthorDto;
+import hftm.blog.control.dto.AuthorDtos.UpdateAuthorDto;
 import hftm.blog.entity.Author;
 import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;
@@ -22,6 +24,12 @@ public class AuthorService {
         return authors;
     }
 
+    public List<Author> findAuthors(String searchString){
+        var authors = authorRepository.find("firstname like ?1 or lastname like ?1", "%" + searchString + "%").list();
+        logger.info("Found " + authors.size() + " blogs");
+        return authors;
+    }
+
     public Author getAuthorById(Long id) {
         var author = authorRepository.findById(id);
         logger.info("Returning " + id);
@@ -29,9 +37,11 @@ public class AuthorService {
     }
 
     @Transactional
-    public void addAuthor(Author author) {
-        logger.info("Adding author " + author.getFirstname() + " " + author.getLastname());
+    public Long addAuthor(AddAuthorDto authorDto) {
+        logger.info("Adding author " + authorDto.firstname() + " " + authorDto.lastname());
+        var author = authorDto.toAuthor();
         authorRepository.persist(author);
+        return author.getId();
     }
 
     @Transactional
@@ -41,15 +51,14 @@ public class AuthorService {
     }
 
     @Transactional
-    public void updateAuthor(long id, Author updatedAuthor) {
+    public void updateAuthor(long id, UpdateAuthorDto updatedAuthorDto) {
         logger.info("Update author " + id);
         
         Author author = authorRepository.findById(id);
 
         if(author != null){
-            author.setFirstname(updatedAuthor.getFirstname());
-            author.setLastname(updatedAuthor.getLastname());
-            author.setBlogs(updatedAuthor.getBlogs());
+            author.setFirstname(updatedAuthorDto.firstname());
+            author.setLastname(updatedAuthorDto.lastname());
         } else {
             logger.error("Author not found");
         }

@@ -4,11 +4,11 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,7 +24,9 @@ public class Author {
     @GeneratedValue
     private Long id;
 
+    @NotBlank
     private String firstname;
+    @NotBlank
     private String lastname;
     private LocalDate creationDate;
 
