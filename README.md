@@ -53,8 +53,8 @@ http://localhost:8080/q/swagger-ui
 
 ## httpie
 
-### Blogs
-Get all Blogs
+
+Get Blogs
 ```Shell
 http :8080/blogs
 ```
@@ -64,26 +64,81 @@ Post Blogs
 http -v POST :8080/blogs title="Blog Title" content="This is a blog content"
 ```
 
-Delete a Post by specify the id
+```Shell
+http -v POST :8080/blogs title="Blog Title 2" content="This is a blog content 2"
+```
+
+```Shell
+http -v POST :8080/blogs title="Blog Title 3" content="This is a blog content 3"
+```
+
+Delete Blog
 ```Shell
 http -v DELETE :8080/blogs/1
+```
+
+PUT
+```Shell
+http -v POST :8080/blogs title="Blog Title 2" content="This is a blog content 2" 
+
+http -v PUT :8080/blogs/1 title="Blog PUT" content="PUT new content"
 ```
 
 ### Authors
 Get Authors
 ```Shell
-http -v GET :8080/blogs/authors
+http -v GET :8080/authors
 ```
 
 Post Authors
 ```Shell
-http -v POST :8080/blogs/authors firstname="Wanja" lastname="Bachmann" 
+http -v POST :8080/authors firstname="Wanja" lastname="Bachmann" 
 ```
 
 Delete Authors
 ```Shell
-http -v DELETE :8080/blogs/authors/1
+http -v DELETE :8080/authors/1
 ```
+
+Search for an Author by URL Parameter
+```URL
+http://localhost:8080/authors?search=Wanja
+```
+
+PUT
+```Shell
+http -v POST :8080/authors firstname="Wanja" lastname="Bachmann" 
+
+http -v PUT :8080/authors/1 firstname="Thomas" lastname="Smith"
+```
+
+### Comments
+Post Comments
+```Shell
+http -v POST :8080/blogs title="Blog Title" content="This is a blog content"
+
+http -v POST :8080/blogs/1/comments content="This is a comment." creator="Hans Müller"
+
+http -v POST :8080/blogs/1/comments content="This is a second comment." creator="Max Muster"
+
+```
+
+Get Comments
+```Shell
+http -v GET :8080/blogs/1/comments
+```
+
+PUT Comments
+```Shell
+http -v PUT :8080/blogs/comments/1 content="Updated comment" creator="Thomas Müller"
+```
+
+Delete Comments
+```Shell
+http -v DELETE :8080/blogs/comments/2
+```
+
+
 # API Design
 
 ```yaml
