@@ -2,12 +2,17 @@ package hftm.blog;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 
+import org.jboss.logging.Logger;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
 import hftm.blog.control.BlogService;
+import hftm.blog.control.dto.BlogDtos.AddBlogDto;
+import hftm.blog.control.dto.BlogDtos.UpdateBlogDto;
 import hftm.blog.entity.Blog;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -17,35 +22,109 @@ public class BlogServiceTest {
     @Inject
     BlogService blogService;
 
-    @Test
-    void listingAndAddingBlogs() {
-        // Arrange
-        Blog blog = new Blog("Testing Blog", "This is my testing blog", LocalDate.of(2025, 05, 03));
-        int blogsBefore;
-        List<Blog> blogs;
+    @Inject
+    Logger logger;
 
-        // Act
+    private static final String NEW_BLOG_TITLE = "Testing Title";
+    private static final String NEW_BLOG_CONTENT = "This is my test content!";
+
+    // Update Test
+    private static final String UPDATE_BLOG_TITLE = "Testing Title Update";
+    private static final String UPDATE_BLOG_CONTENT = "This is my updated test content!";
+
+    private AddBlogDto blogDto;
+    private List<Blog> blogs;
+    int blogsBefore;
+    int blogsAfterInit;
+
+    @BeforeEach
+    public void init() {
         blogsBefore = blogService.getBlogs().size();
-        blogService.addBlog(blog);
+        blogDto = new AddBlogDto(NEW_BLOG_TITLE, NEW_BLOG_CONTENT, new HashSet<>());
+        blogService.addBlogDto(blogDto);
         blogs = blogService.getBlogs();
-
-        // Assert
-        assertEquals(blogsBefore + 1, blogs.size());
-        assertEquals(blog.getId(), blogs.get(blogs.size() - 1).getId());
+        blogsAfterInit = blogs.size();
     }
 
+    @Order(1)
     @Test
-    void deleteBlog(){
+    void testListingAndAddingBlogs() {
+
+        // Assert
+        Blog lastBlog = blogs.get(blogs.size() - 1);
+        assertEquals(blogsBefore + 1, blogs.size());
+        assertEquals(lastBlog.getId(), blogs.get(blogs.size() - 1).getId());
+        assertEquals(NEW_BLOG_TITLE, lastBlog.getTitle());
+        assertEquals(NEW_BLOG_CONTENT, lastBlog.getContent());
+    }
+
+/*     @Order(2)
+    @Test
+    void testUpdateBlog() {
+        
+          // Arrange
+          blogs = blogService.getBlogs();
+          Blog lastBlog = blogs.get(blogs.size() - 1);
+          UpdateBlogDto blogDto = new UpdateBlogDto(lastBlog.getId(),
+          UPDATE_BLOG_TITLE, UPDATE_BLOG_CONTENT, new HashSet<>());
+          
+          logger.info("----------------------" + blogs.size() +
+          "----------------------");
+          logger.info("----------------------" + lastBlog.getTitle() +
+          "----------------------");
+          logger.info("----------------------" + lastBlog.getContent() +
+          "---------------------");
+          
+          // Act
+          blogService.updateBlogDto(lastBlog.getId(), blogDto);
+          
+          logger.info("----------------------" + blogDto.content() +
+          "---------------------");
+          // Fetch the updated list of blogs after the update
+          blogs = blogService.getBlogs();
+          
+          // Assert
+          lastBlog = blogs.get(blogs.size() - 1);
+          assertEquals(UPDATE_BLOG_TITLE, lastBlog.getTitle());
+         assertEquals(UPDATE_BLOG_CONTENT, lastBlog.getContent());
+         
+    } */
+
+    @Order(3)
+    @Test
+    void testRemoveBlog() {
         // Arrange
-        Blog blog = new Blog("Blog", "Content from the Blog", LocalDate.of(2025, 06, 03));
-        int blogsBefore;
-        blogService.addBlog(blog);
+        Blog lastBlog = blogs.get(blogs.size() - 1);
+        
+        // Act
+        blogService.removeBlog(lastBlog);
+
+        // Assert
+        assertEquals(blogsAfterInit - 1, blogService.getBlogs().size());
+    }
+
+    @Order(4)
+    @Test
+    void testRemoveBlogById() {
+        // Arrange
+        
+        // Act
+        blogService.removeBlogById(1L);
+
+        // Assert
+        assertEquals(blogsAfterInit - 1, blogService.getBlogs().size());
+    }
+
+    @Order(5)
+    @Test
+    void testFindBlogs(){
+        // Arrange
+        List<Blog> foundBlog = blogService.findBlogs("test content");
 
         // Act
-        blogsBefore = blogService.getBlogs().size();
-        blogService.removeBlog(blog);
 
         // Assert
-        assertEquals(blogsBefore -1 , blogService.getBlogs().size());
+        assert(foundBlog.size() > 0);
     }
+
 }

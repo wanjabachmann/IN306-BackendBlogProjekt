@@ -59,6 +59,7 @@ public class BlogService {
             blog.setTitle(updatedBlogDto.title());
             blog.setContent(updatedBlogDto.content());
             blog.setAuthors(updatedBlogDto.author());
+            blogRepository.persist(blog);
         } else {
             logger.error("Blog not found");
         }
