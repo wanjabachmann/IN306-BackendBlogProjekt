@@ -57,11 +57,15 @@ public class CommentService {
         Comment comment = commentRepository.findById(id);
         if (comment != null) {
             logger.info("Update Comment: " + id);
+            logger.info("Before Update - Content: " + comment.getContent());
+            logger.info("Before Update - Creator: " + comment.getCreator());
             comment.setContent(updatedCommentDto.content());
             comment.setCreator(updatedCommentDto.creator());
             commentRepository.persist(comment);
+            logger.info("After Update - Content: " + comment.getContent());
+            logger.info("After Update - Creator: " + comment.getCreator());
         } else {
-            logger.error("Blog not found");
+            logger.error("Comment not found");
         }
     }
 

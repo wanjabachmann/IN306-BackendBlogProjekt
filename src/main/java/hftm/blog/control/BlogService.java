@@ -56,9 +56,15 @@ public class BlogService {
         Blog blog = blogRepository.findById(Id);
 
         if (blog != null) {
-            blog.setTitle(updatedBlogDto.title());
-            blog.setContent(updatedBlogDto.content());
-            blog.setAuthors(updatedBlogDto.author());
+            if (updatedBlogDto.title() != null) {
+                blog.setTitle(updatedBlogDto.title());
+            }
+            if (updatedBlogDto.content() != null) {
+                blog.setContent(updatedBlogDto.content());
+            }
+            if (updatedBlogDto.author() != null) {
+                blog.setAuthors(updatedBlogDto.author());
+            }
             blogRepository.persist(blog);
         } else {
             logger.error("Blog not found");

@@ -9,10 +9,7 @@ import jakarta.validation.Valid;
 public class CommentDtos {
     
     @Valid
-    public record AddCommentDto(String content, String creator, Blog blog){
-        public Comment toComment(){
-            return new Comment(content, LocalDate.now(), creator, blog);
-        }
+    public record AddCommentDto(String content, String creator){
     }
 
     @Valid
