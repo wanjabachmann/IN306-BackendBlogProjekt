@@ -82,7 +82,7 @@ public class BlogResource {
     @Tag(name = "Authors")
     @Path("authors")
     public Response addAuthor(@Valid AddAuthorDto authorDto, @Context UriInfo uriInfo) {
-        var id = this.authorService.addAuthor(authorDto);
+        var id = this.authorService.addAuthorDto(authorDto);
 
         // Status 201 created + Path to created resource
         var uri = uriInfo.getAbsolutePathBuilder().path(Long.toString((id))).build();
@@ -125,7 +125,7 @@ public class BlogResource {
                     .entity("Author not found")
                     .build();
         } else {
-            this.authorService.updateAuthor(id, updatedAuthorDto);
+            this.authorService.updateAuthorDto(id, updatedAuthorDto);
             return Response.status(Response.Status.OK)
                     .entity(author)
                     .build();
