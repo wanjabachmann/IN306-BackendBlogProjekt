@@ -279,11 +279,14 @@ public class BlogResource {
     @Tag(name = "Comments")
     @Path("blogs/{id}/comments")
     @Transactional
-    public Response addComment(@PathParam("id") Long blogId, AddCommentDto commentDto) {
+    public Response addComment(@PathParam("id") Long blogId, AddCommentDto commentDto, @Context UriInfo uriInfo) {
         Blog blog = blogService.getBlogById(blogId);
         if (blog != null) {
-            commentService.addCommentDto(blogId,commentDto);
-            return Response.status(Response.Status.CREATED).entity(commentDto).build();
+            var id = this.commentService.addCommentDto(blogId, commentDto);
+
+            // Status 201 created + Path to created resource
+            var uri = uriInfo.getAbsolutePathBuilder().path(Long.toString(id)).build();
+            return Response.created(uri).build();
         } else {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
