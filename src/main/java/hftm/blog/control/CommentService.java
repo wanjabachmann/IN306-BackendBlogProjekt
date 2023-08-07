@@ -37,7 +37,7 @@ public class CommentService {
     }
 
     @Transactional
-    public void addCommentDto(Long blogId, AddCommentDto commentDto) {
+    public Long addCommentDto(Long blogId, AddCommentDto commentDto) {
         logger.info("Adding comment: " + commentDto.toString());
         Blog blog = blogRepository.findById(blogId);
         if (blog != null) {
@@ -47,9 +47,11 @@ public class CommentService {
             comment.setCreator(commentDto.creator());
             comment.setBlog(blog);
             commentRepository.persist(comment);
+            return(comment.getId());
         } else {
             logger.error("Blog not found");
         }
+        return blogId;
     }
 
     @Transactional
@@ -57,11 +59,15 @@ public class CommentService {
         Comment comment = commentRepository.findById(id);
         if (comment != null) {
             logger.info("Update Comment: " + id);
+            logger.info("Before Update - Content: " + comment.getContent());
+            logger.info("Before Update - Creator: " + comment.getCreator());
             comment.setContent(updatedCommentDto.content());
             comment.setCreator(updatedCommentDto.creator());
             commentRepository.persist(comment);
+            logger.info("After Update - Content: " + comment.getContent());
+            logger.info("After Update - Creator: " + comment.getCreator());
         } else {
-            logger.error("Blog not found");
+            logger.error("Comment not found");
         }
     }
 

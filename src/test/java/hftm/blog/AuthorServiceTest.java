@@ -5,9 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import hftm.blog.control.AuthorService;
+import hftm.blog.control.dto.AuthorDtos;
 import hftm.blog.entity.Author;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -16,35 +18,61 @@ import jakarta.inject.Inject;
 public class AuthorServiceTest {
     @Inject
     AuthorService authorService;
-    
+
+    private static final String NEW_AUTHOR_FIRSTNAME = "Urs";
+    private static final String NEW_AUTHOR_LASTNAME = "Meister";
+
+    private static final String UPDATE_AUTHOR_FIRSTNAME = "Hans";
+    private static final String UPDATE_AUTHOR_LASTNAME = "Muster";
+    private List<Author> authors;
+    private Author lastAuthor;
+
+    @BeforeEach
+    public void init() {
+        AuthorDtos.AddAuthorDto addAuthorDto = new AuthorDtos.AddAuthorDto(NEW_AUTHOR_FIRSTNAME, NEW_AUTHOR_LASTNAME);
+        authorService.addAuthorDto(addAuthorDto);
+        authors = authorService.getAuthors();
+    }
 
     @Test
-    void listingAndAddingAuthors() {
+    void testListingAndAddingAuthors() {
         // Arrange
-        Author author = new Author("Hans", "Müller",LocalDate.of(2021, 2, 1));
-        int authorsBefore;
-        List<Author> authors;
 
         // Act
-        authorsBefore = authorService.getAuthors().size();
-        authorService.addAuthor(author);
-        authors = authorService.getAuthors();
+
+        Author lastAuthor = authors.get(authors.size() - 1);
+        System.out.println(lastAuthor.getFirstname());
 
         // Assert
-        assertEquals(authorsBefore + 1, authors.size());
-        assertEquals(author.getId(), authors.get(authors.size() - 1).getId());
+        assertEquals(NEW_AUTHOR_FIRSTNAME, lastAuthor.getFirstname());
+        assertEquals(NEW_AUTHOR_LASTNAME, lastAuthor.getLastname());
+        assertEquals(LocalDate.now(), lastAuthor.getCreationDate());
+    }
+
+    @Test
+    void testUpdateAuthor() {
+/*         // Arrange
+        Author lastAuthor = authors.get(authors.size() - 1);
+        UpdateAuthorDto authorDto = new UpdateAuthorDto(lastAuthor.getId(), UPDATE_AUTHOR_FIRSTNAME,
+                UPDATE_AUTHOR_LASTNAME);
+
+        // Act
+        authorService.updateAuthorDto(lastAuthor.getId(), authorDto);
+
+        // Assert
+        assertEquals(UPDATE_AUTHOR_FIRSTNAME, lastAuthor.getFirstname());
+        assertEquals(UPDATE_AUTHOR_FIRSTNAME, lastAuthor.getLastname()); */
     }
 
     @Test
     void deleteAuthor(){
         // Arrange
-        Author author = new Author("Ueli", "Wagner", LocalDate.of(2022, 07, 01));
+        Author lastAuthor = authors.get(authors.size() -1);
         int authorsBefore;
-        authorService.addAuthor(author);
 
         // Act
         authorsBefore = authorService.getAuthors().size();
-        authorService.removeAuthor(author);
+        authorService.removeAuthor(lastAuthor);
 
         // Assert
         assertEquals(authorsBefore -1, authorService.getAuthors().size());

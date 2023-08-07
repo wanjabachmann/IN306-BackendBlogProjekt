@@ -52,8 +52,7 @@ The swagger ui can be opened by the following link:
 http://localhost:8080/q/swagger-ui
 
 ## httpie
-
-
+### Blogs
 Get Blogs
 ```Shell
 http :8080/blogs
@@ -137,7 +136,6 @@ Delete Comments
 ```Shell
 http -v DELETE :8080/blogs/comments/2
 ```
-
 
 # API Design
 
@@ -346,14 +344,39 @@ components:
 
 # Changelog
 ## New
+- 
+- feat: Add repsonse for created comments to create get the URI
+- docs: :memo: Update the readme with the changes and unfinished tasks as well as the updated httpie queries
+- test: :test_tube: Add junit tests for Author and  Comments and remove some fix some parts on the Blog tests
+- fix: :bug: Fix changes in BlogResrouce and remove not needed imports
+- build: :building_construction: add datatype dependency to make localdate running
+- fix: :bug: Fix some dto's to make everything running.
+- test: :test_tube: Add System test to test the REST API by RestAssured
+- test: :test_tube: Add Junit Test for the BlogService
+- Merge pull request #5 from wanjabachmann/add_design_and_implement_it
+- docs: :memo: Update the readme with the latest httpie tests
+- fix: :bug: Fix the return type for Author PUT method
+- feat: :safety_vest: Implement the DTO's on the BlogResource
+- feat: :safety_vest: Add DTO for Comment entity for the PUT & PATCH methods
+- feat: :safety_vest: Add DTO for Blog entity for the PUT & PATCH methods
+- feat: :safety_vest: Add DTO for Author entity for the PUT & PATCH methods
+- feat: :safety_vest: Add validation to the entities
+- feat: :necktie: Add comment entity
+- feat: :goal_net: Add response/error handling for all Blog Resources
+- feat: :sparkles: Add find methods for Author and Blog to search in the list by a string from a query parameter.
+- feat: :safety_vest: Add the quarkus-hibernate-validator extension
+- Add tag as title
+- Merge pull request #4 from wanjabachmann/add_design_and_implement_it
+
+
+
+## Old
+- docs: :memo: Updates the readme file with the yaml design and the updated changelog
 - feat: :necktie: Adds methode getAuthorById and updateAuthor for get and put call ands a customized APIRepsonse
 - refactor: :heavy_minus_sign: Removes unused import
 - feat: :necktie: Adds methode getBlogById and updateBlog for get and put call
 - feat: :necktie: Adds creation date to Blog and Author
 - test: :test_tube: Updates the Blog and Author tests to support creation date as additional variable
-
-
-## Old
 - Merge pull request #3 from wanjabachmann/add_RESTEasy
 - docs: :memo: Adds the author httpie cmdlets to the README and updates the changelog
 - feat: :sparkles: Implements the author anotations
@@ -376,6 +399,7 @@ components:
 - feat: Creates the Quarkus project and a first customization from the Projekt-Setup task in moodle
 - Initial commit
 
-# Stuff not working / unfinished
-- At the moment is just one Custom Response implemented (for authors)
-- I was not able to get the Author relationship working
+# Stuff not working / unfinished / Questions
+- Do we need DTOS for representative queries like GET requests if we want to display/output everything?
+- I am not sure how to implement the DTO for requests without parameters
+- Junit tests implemented for all entites but I was not able to get the PUT Junit tests working. :(

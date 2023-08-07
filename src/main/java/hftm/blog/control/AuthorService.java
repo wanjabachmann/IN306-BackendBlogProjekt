@@ -37,7 +37,7 @@ public class AuthorService {
     }
 
     @Transactional
-    public Long addAuthor(AddAuthorDto authorDto) {
+    public Long addAuthorDto(AddAuthorDto authorDto) {
         logger.info("Adding author " + authorDto.firstname() + " " + authorDto.lastname());
         var author = authorDto.toAuthor();
         authorRepository.persist(author);
@@ -51,7 +51,7 @@ public class AuthorService {
     }
 
     @Transactional
-    public void updateAuthor(long id, UpdateAuthorDto updatedAuthorDto) {
+    public void updateAuthorDto(long id, UpdateAuthorDto updatedAuthorDto) {
         logger.info("Update author " + id);
         
         Author author = authorRepository.findById(id);
@@ -59,6 +59,7 @@ public class AuthorService {
         if(author != null){
             author.setFirstname(updatedAuthorDto.firstname());
             author.setLastname(updatedAuthorDto.lastname());
+            authorRepository.persist(author);
         } else {
             logger.error("Author not found");
         }
