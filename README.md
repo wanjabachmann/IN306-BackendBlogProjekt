@@ -344,6 +344,9 @@ components:
 
 # Changelog
 ## New
+- 
+- feat: Add repsonse for created comments to create get the URI
+- docs: :memo: Update the readme with the changes and unfinished tasks as well as the updated httpie queries
 - test: :test_tube: Add junit tests for Author and  Comments and remove some fix some parts on the Blog tests
 - fix: :bug: Fix changes in BlogResrouce and remove not needed imports
 - build: :building_construction: add datatype dependency to make localdate running
