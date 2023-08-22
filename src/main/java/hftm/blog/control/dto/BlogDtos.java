@@ -10,6 +10,13 @@ import jakarta.validation.Valid;
 public class BlogDtos {
 
     @Valid
+    public record BlogOverviewDto(Long id, String title, String content){
+        public static BlogOverviewDto fromBlog(Blog blog){
+            return new BlogOverviewDto(blog.getId(), blog.getTitle(), blog.getContent());
+        }
+    }
+
+    @Valid
     public record AddBlogDto(String title, String content, Set<Author> author) {
         public Blog toBlog() {
             return new Blog(title, content, LocalDate.now(), author);

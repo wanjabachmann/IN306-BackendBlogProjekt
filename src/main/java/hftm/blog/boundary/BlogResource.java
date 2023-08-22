@@ -15,6 +15,7 @@ import hftm.blog.control.dto.BlogDtos;
 import hftm.blog.control.dto.CommentDtos;
 import hftm.blog.control.dto.AuthorDtos.AddAuthorDto;
 import hftm.blog.control.dto.AuthorDtos.UpdateAuthorDto;
+import hftm.blog.control.dto.BlogDtos.BlogOverviewDto;
 import hftm.blog.control.dto.CommentDtos.AddCommentDto;
 import hftm.blog.entity.Author;
 import hftm.blog.entity.Blog;
@@ -161,7 +162,7 @@ public class BlogResource {
             @APIResponse(responseCode = "404", description = "No Blogs found")
     })
     public Response getEntries(@QueryParam("search") String search) {
-        List<Blog> blogs = null;
+        List<BlogOverviewDto> blogs = null;
 
         if (search == null || search.isBlank()) {
             blogs = this.blogService.getBlogs();
@@ -199,7 +200,7 @@ public class BlogResource {
             @APIResponse(responseCode = "404", description = "Blog not found")
     })
     public Response getBlog(@PathParam("id") Long id) {
-        Blog blog = this.blogService.getBlogById(id);
+        BlogOverviewDto blog = this.blogService.getBlogById(id);
         if (blog == null) {
             return Response.status(Response.Status.NOT_FOUND)
                     .entity("Blog not found")
@@ -215,7 +216,7 @@ public class BlogResource {
     @Tag(name = "Blogs")
     @Path("blogs/{id}")
     public Response updateBlog(@PathParam("id") long id, BlogDtos.UpdateBlogDto updatedBlogDto) {
-        Blog blog = this.blogService.getBlogById(id);
+        BlogOverviewDto blog = this.blogService.getBlogById(id);
 
         // Check if Blog exist before modify
         if (blog == null) {
@@ -238,7 +239,7 @@ public class BlogResource {
             @APIResponse(responseCode = "404", description = "Blog not found")
     })
     public Response removeBlog(@PathParam("id") Long id) {
-        Blog blog = this.blogService.getBlogById(id);
+        BlogOverviewDto blog = this.blogService.getBlogById(id);
 
         if (blog == null) {
             return Response.status(Response.Status.NOT_FOUND)
@@ -280,7 +281,7 @@ public class BlogResource {
     @Path("blogs/{id}/comments")
     @Transactional
     public Response addComment(@PathParam("id") Long blogId, AddCommentDto commentDto, @Context UriInfo uriInfo) {
-        Blog blog = blogService.getBlogById(blogId);
+        BlogOverviewDto blog = blogService.getBlogById(blogId);
         if (blog != null) {
             var id = this.commentService.addCommentDto(blogId, commentDto);
 

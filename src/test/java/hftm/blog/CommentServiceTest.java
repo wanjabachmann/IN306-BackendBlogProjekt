@@ -63,7 +63,7 @@ public class CommentServiceTest {
     @Test
     public void testAddCommentToBlog() {
         // Assert
-        Comment lastComment = comments.get(comments.size() - 1);
+        Comment lastComment = comments.get(comments.size() -1);
         assertEquals(NEW_COMMENT_CONTENT, lastComment.getContent());
         assertEquals(NEW_COMMENT_CREATOR, lastComment.getCreator());
     }
