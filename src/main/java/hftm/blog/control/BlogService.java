@@ -3,7 +3,9 @@ package hftm.blog.control;
 import java.util.List;
 import org.jboss.logging.Logger;
 
+import hftm.blog.control.dto.BlogDtos;
 import hftm.blog.control.dto.BlogDtos.AddBlogDto;
+import hftm.blog.control.dto.BlogDtos.BlogOverviewDto;
 import hftm.blog.control.dto.BlogDtos.UpdateBlogDto;
 import hftm.blog.entity.Blog;
 import jakarta.enterprise.context.Dependent;
@@ -18,21 +20,34 @@ public class BlogService {
     @Inject
     Logger logger;
 
-    public List<Blog> getBlogs() {
-        var blogs = blogRepository.listAll();
+    public List<BlogOverviewDto> getBlogs() {
+        var blogs = blogRepository.streamAll().map(BlogOverviewDto::fromBlog).toList();
         logger.info("Returning " + blogs.size() + " blogs");
         return blogs;
     }
 
-    public List<Blog> findBlogs(String searchString) {
-        var blogs = blogRepository.find("title like ?1 or content like ?1", "%" + searchString + "%").list();
+    public List<BlogOverviewDto> findBlogs(String searchString) {
+        var blogsQuery = blogRepository.find("title like ?1 or content like ?1", "%" + searchString + "%").list();
+
+        var blogs = blogsQuery.stream().map(BlogOverviewDto::fromBlog).toList();
         logger.info("Found " + blogs.size() + " blogs");
         return blogs;
     }
 
-    public Blog getBlogById(Long id) {
+    /*
+     * public BlogOverviewDto getBlogById(Long id) {
+     * var blog = blogRepository.findById(id);
+     * blog.streamAll()
+     * return blog;
+     * }
+     */
+
+    public BlogDtos.BlogOverviewDto getBlogById(Long id) {
         var blog = blogRepository.findById(id);
-        return blog;
+        if (blog != null) {
+            return BlogDtos.BlogOverviewDto.fromBlog(blog);
+        }
+        return null;
     }
 
     @Transactional
@@ -44,9 +59,15 @@ public class BlogService {
     }
 
     @Transactional
-    public void removeBlog(Blog blog) {
-        logger.info("Removing blog " + blog.toString());
-        blogRepository.delete(blog);
+    public void removeBlog(BlogOverviewDto lastBlogOverview) {
+        Blog blogToDelete = blogRepository.findById(lastBlogOverview.id());
+
+        if (blogToDelete != null) {
+            logger.info("Removing blog " + blogToDelete.toString());
+            blogRepository.delete(blogToDelete);
+        } else {
+            logger.info("Blog not found");
+        }
     }
 
     @Transactional

@@ -8,6 +8,7 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import io.smallrye.common.constraint.NotNull;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -53,7 +54,7 @@ public class Blog {
             @JoinColumn(name = "blog_id") })
     private Set<Author> authors = new HashSet<>();
 
-    @OneToMany(mappedBy = "blog", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "blog", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonIgnoreProperties("blog") // Avoid serializing the 'comments' property
     private List<Comment> comments;
 

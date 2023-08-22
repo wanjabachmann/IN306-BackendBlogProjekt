@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import hftm.blog.control.BlogService;
 import hftm.blog.control.dto.BlogDtos.AddBlogDto;
+import hftm.blog.control.dto.BlogDtos.BlogOverviewDto;
 import hftm.blog.entity.Blog;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -32,7 +33,7 @@ public class BlogServiceTest {
     private static final String UPDATE_BLOG_CONTENT = "This is my updated test content!";
 
     private AddBlogDto blogDto;
-    private List<Blog> blogs;
+    private List<BlogOverviewDto> blogs;
     int blogsBefore;
     int blogsAfterInit;
 
@@ -50,44 +51,48 @@ public class BlogServiceTest {
     void testListingAndAddingBlogs() {
 
         // Act
-        Blog lastBlog = blogs.get(blogs.size() - 1);
+        BlogOverviewDto lastBlog = blogs.get(blogs.size() - 1);
 
         // Assert
         assertEquals(blogsBefore + 1, blogs.size());
-        assertEquals(lastBlog.getId(), blogs.get(blogs.size() - 1).getId());
-        assertEquals(NEW_BLOG_TITLE, lastBlog.getTitle());
-        assertEquals(NEW_BLOG_CONTENT, lastBlog.getContent());
+        assertEquals(lastBlog.id(), blogs.get(blogs.size() - 1).id());
+        assertEquals(NEW_BLOG_TITLE, lastBlog.title());
+        assertEquals(NEW_BLOG_CONTENT, lastBlog.content());
     }
 
     @Order(2)
     @Test
     void testUpdateBlog() {
-/*         // Arrange
-        blogs = blogService.getBlogs();
-        UpdateBlogDto blogDto = new UpdateBlogDto(1L, UPDATE_BLOG_TITLE, UPDATE_BLOG_CONTENT, new HashSet<>());
+        /*
+         * // Arrange
+         * blogs = blogService.getBlogs();
+         * UpdateBlogDto blogDto = new UpdateBlogDto(1L, UPDATE_BLOG_TITLE,
+         * UPDATE_BLOG_CONTENT, new HashSet<>());
+         * 
+         * 
+         * // Act
+         * blogService.updateBlogDto(1L, blogDto);
+         * 
+         * // Fetch the updated list of blogs after the update
+         * blogs = blogService.getBlogs();
+         * 
+         * // Assert
+         * Blog updatedBlog = blogService.getBlogById(1L);
+         * assertEquals(UPDATE_BLOG_TITLE, updatedBlog.getTitle());
+         * assertEquals(UPDATE_BLOG_CONTENT, updatedBlog.getContent());
+         */
 
-    
-        // Act
-        blogService.updateBlogDto(1L, blogDto);
-    
-        // Fetch the updated list of blogs after the update
-        blogs = blogService.getBlogs();
-    
-        // Assert
-        Blog updatedBlog = blogService.getBlogById(1L);
-        assertEquals(UPDATE_BLOG_TITLE, updatedBlog.getTitle());
-        assertEquals(UPDATE_BLOG_CONTENT, updatedBlog.getContent()); */
-    
     }
 
     @Order(3)
     @Test
     void testRemoveBlog() {
         // Arrange
-        Blog lastBlog = blogs.get(blogs.size() - 1);
+        BlogOverviewDto lastBlogOverview = blogs.get(blogs.size() - 1);
+        BlogOverviewDto lastBlogEntity = blogService.getBlogById(lastBlogOverview.id());
 
         // Act
-        blogService.removeBlog(lastBlog);
+        blogService.removeBlog(lastBlogEntity);
 
         // Assert
         assertEquals(blogsAfterInit - 1, blogService.getBlogs().size());
@@ -109,7 +114,7 @@ public class BlogServiceTest {
     @Test
     void testFindBlogs() {
         // Arrange
-        List<Blog> foundBlog = blogService.findBlogs("test content");
+        List<BlogOverviewDto> foundBlog = blogService.findBlogs("test content");
 
         // Act
 
