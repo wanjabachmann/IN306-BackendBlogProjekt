@@ -51,6 +51,24 @@ If you want to learn more about building native executables, please consult http
 The swagger ui can be opened by the following link:
 http://localhost:8080/q/swagger-ui
 
+# Token-Auth concept
+
+| Tag      | Methods | Permission / Role |
+| -------- | ------- | ----------------- |
+| Authors  | GET     | public            |
+| Authors  | POST    | user              |
+| Authors  | PUT     | user              |
+| Authors  | DELETE  | administrator     |
+| Blogs    | GET     | public            |
+| Blogs    | POST    | user              |
+| Blogs    | PUT     | user              |
+| Blogs    | DELETE  | user              |
+| Comments | GET     | public            |
+| Comments | POST    | public            |
+| Comments | PUT     | administrator     |
+| Comments | DELETE  | administrator     |
+
+
 ## httpie
 ### Blogs
 Get Blogs
@@ -344,7 +362,10 @@ components:
 
 # Changelog
 ## New
-- 
+- docs: :memo: Add Token-Auth concept
+- feat: :alien: Add Blog Overview dto
+
+## Old
 - feat: Add repsonse for created comments to create get the URI
 - docs: :memo: Update the readme with the changes and unfinished tasks as well as the updated httpie queries
 - test: :test_tube: Add junit tests for Author and  Comments and remove some fix some parts on the Blog tests
@@ -367,10 +388,6 @@ components:
 - feat: :safety_vest: Add the quarkus-hibernate-validator extension
 - Add tag as title
 - Merge pull request #4 from wanjabachmann/add_design_and_implement_it
-
-
-
-## Old
 - docs: :memo: Updates the readme file with the yaml design and the updated changelog
 - feat: :necktie: Adds methode getAuthorById and updateAuthor for get and put call ands a customized APIRepsonse
 - refactor: :heavy_minus_sign: Removes unused import
@@ -400,6 +417,7 @@ components:
 - Initial commit
 
 # Stuff not working / unfinished / Questions
-- Do we need DTOS for representative queries like GET requests if we want to display/output everything?
-- I am not sure how to implement the DTO for requests without parameters
-- Junit tests implemented for all entites but I was not able to get the PUT Junit tests working. :(
+- DTO's are implemented for all update and add methods. I tired to implement the same for the get blogs method
+but it's not visible in the Swagger UI.
+- Junit tests implemented for all entites but I was not able to get the PUT Junit tests working. 
+As well as the testRemoveCommentById :(
