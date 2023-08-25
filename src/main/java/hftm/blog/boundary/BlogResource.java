@@ -20,6 +20,7 @@ import hftm.blog.control.dto.CommentDtos.AddCommentDto;
 import hftm.blog.entity.Author;
 import hftm.blog.entity.Blog;
 import hftm.blog.entity.Comment;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -82,6 +83,7 @@ public class BlogResource {
     @POST
     @Tag(name = "Authors")
     @Path("authors")
+    @RolesAllowed("user")
     public Response addAuthor(@Valid AddAuthorDto authorDto, @Context UriInfo uriInfo) {
         var id = this.authorService.addAuthorDto(authorDto);
 
@@ -113,6 +115,7 @@ public class BlogResource {
     @PUT
     @Tag(name = "Authors")
     @Path("authors/{id}")
+    @RolesAllowed("user")
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "Author updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Author.class))),
             @APIResponse(responseCode = "404", description = "Author not found")
@@ -136,6 +139,7 @@ public class BlogResource {
     @DELETE
     @Tag(name = "Authors")
     @Path("authors/{id}")
+    @RolesAllowed("administrator")
     public Response removeAuthor(@PathParam("id") Long id) {
         Author author = this.authorService.getAuthorById(id);
 
@@ -184,6 +188,7 @@ public class BlogResource {
     @POST
     @Tag(name = "Blogs")
     @Path("blogs")
+    @RolesAllowed("user")
     public Response addBlog(BlogDtos.AddBlogDto newBlogDto, @Context UriInfo uriInfo) {
         var id = this.blogService.addBlogDto(newBlogDto);
 
@@ -215,6 +220,7 @@ public class BlogResource {
     @PUT
     @Tag(name = "Blogs")
     @Path("blogs/{id}")
+    @RolesAllowed("user")
     public Response updateBlog(@PathParam("id") long id, BlogDtos.UpdateBlogDto updatedBlogDto) {
         BlogOverviewDto blog = this.blogService.getBlogById(id);
 
@@ -234,6 +240,7 @@ public class BlogResource {
     @DELETE
     @Tag(name = "Blogs")
     @Path("blogs/{id}")
+    @RolesAllowed("user")
     @APIResponses(value = {
             @APIResponse(responseCode = "204", description = "Blog removed successfully"),
             @APIResponse(responseCode = "404", description = "Blog not found")
@@ -296,6 +303,7 @@ public class BlogResource {
     @PUT
     @Tag(name = "Comments")
     @Path("blogs/comments/{id}")
+    @RolesAllowed("administrator")
     public Response updateCommentDto(@PathParam("id") Long id, CommentDtos.UpdateCommentDto updatedCommentDto) {
         if (updatedCommentDto == null) {
             return Response.status(Status.BAD_REQUEST)
@@ -312,6 +320,7 @@ public class BlogResource {
     @DELETE
     @Tag(name = "Comments")
     @Path("blogs/comments/{id}")
+    @RolesAllowed("administrator")
     @APIResponses(value = {
             @APIResponse(responseCode = "204", description = "Comment removed successfully"),
             @APIResponse(responseCode = "404", description = "Comment not found")
