@@ -20,6 +20,7 @@ import hftm.blog.control.dto.CommentDtos.AddCommentDto;
 import hftm.blog.entity.Author;
 import hftm.blog.entity.Blog;
 import hftm.blog.entity.Comment;
+import io.quarkus.security.identity.SecurityIdentity;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -49,6 +50,9 @@ public class BlogResource {
 
     @Inject
     CommentService commentService;
+
+    @Inject
+    SecurityIdentity securityIdentity;
 
     /*
      * Author Entries

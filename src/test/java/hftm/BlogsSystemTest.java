@@ -1,8 +1,4 @@
 package hftm;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.io.StringReader;
 
 import org.jboss.resteasy.reactive.RestResponse.Status;
@@ -15,18 +11,20 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.keycloak.client.KeycloakTestClient;
 import io.restassured.RestAssured;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
-
 @QuarkusTest
 @TestInstance(Lifecycle.PER_CLASS) // Sicherstellen, dass die Tests in der gleichen Instanz ausgeführt werden
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class) // Ermöglicht, dass die Tests in der richtigen Reihenfolge
                                                       // ausgeführt werden
 public class BlogsSystemTest {
+
+    KeycloakTestClient keycloakClient = new KeycloakTestClient();
+
     private static final String NEW_BLOG_TITLE = "Testing";
     private static final String NEW_BLOG_CONTENT = "Testing with Quarkus easy!";
 
@@ -70,6 +68,7 @@ public class BlogsSystemTest {
         // Blog-Items im Header zurückgibt
         String location = RestAssured
                 .given()
+                .auth().oauth2(getAccessTokenAlice())
                 .body(newBlogJson)
                 .contentType(MediaType.APPLICATION_JSON)
                 .when()
@@ -143,6 +142,7 @@ public class BlogsSystemTest {
         // Blog-Items im Header zurückgibt
         String location = RestAssured
                 .given()
+                .auth().oauth2(getAccessTokenAlice())
                 .body(newAuthorJson)
                 .contentType(MediaType.APPLICATION_JSON)
                 .when()
@@ -205,6 +205,7 @@ public class BlogsSystemTest {
         // Comment-Items im Header zurückgibt
         String location = RestAssured
                 .given()
+                .auth().oauth2(getAccessTokenAlice())
                 .body(newCommentJson)
                 .contentType(MediaType.APPLICATION_JSON)
                 .when()
@@ -256,9 +257,17 @@ public class BlogsSystemTest {
     void removeCommentItem() {
     // Delete the comment with the ID `newCommentId`
     RestAssured
+            .given()
+            .auth().oauth2(getAccessTokenAlice())
             .when()
             .delete("/blogs/comments/" + newCommentId)
             .then()
             .statusCode(Status.NO_CONTENT.getStatusCode());
+    }
+
+
+    // get Token from Alice to peform the test as admin user
+    protected String getAccessTokenAlice() {
+        return keycloakClient.getAccessToken("alice", "1234", "quarkus-app");
     }
 }
