@@ -1,8 +1,5 @@
 package hftm;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.io.StringReader;
 
 import org.jboss.resteasy.reactive.RestResponse.Status;
@@ -15,18 +12,21 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.keycloak.client.KeycloakTestClient;
 import io.restassured.RestAssured;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 
 @QuarkusTest
 @TestInstance(Lifecycle.PER_CLASS) // Sicherstellen, dass die Tests in der gleichen Instanz ausgeführt werden
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class) // Ermöglicht, dass die Tests in der richtigen Reihenfolge
                                                       // ausgeführt werden
 public class BlogsSystemTest {
+
+    KeycloakTestClient keycloakClient = new KeycloakTestClient();
+
     private static final String NEW_BLOG_TITLE = "Testing";
     private static final String NEW_BLOG_CONTENT = "Testing with Quarkus easy!";
 
@@ -70,6 +70,7 @@ public class BlogsSystemTest {
         // Blog-Items im Header zurückgibt
         String location = RestAssured
                 .given()
+                .auth().oauth2(getAccessTokenAlice())
                 .body(newBlogJson)
                 .contentType(MediaType.APPLICATION_JSON)
                 .when()
@@ -143,6 +144,7 @@ public class BlogsSystemTest {
         // Blog-Items im Header zurückgibt
         String location = RestAssured
                 .given()
+                .auth().oauth2(getAccessTokenAlice())
                 .body(newAuthorJson)
                 .contentType(MediaType.APPLICATION_JSON)
                 .when()
@@ -205,6 +207,7 @@ public class BlogsSystemTest {
         // Comment-Items im Header zurückgibt
         String location = RestAssured
                 .given()
+                .auth().oauth2(getAccessTokenAlice())
                 .body(newCommentJson)
                 .contentType(MediaType.APPLICATION_JSON)
                 .when()
@@ -237,6 +240,7 @@ public class BlogsSystemTest {
     @Order(11)
     void readNewComment() {
         String responseBody = RestAssured
+                .given()
                 .when()
                 .get("/blogs/" + newBlogId + "/comments")
                 .then()
@@ -254,11 +258,76 @@ public class BlogsSystemTest {
     @Test
     @Order(12)
     void removeCommentItem() {
-    // Delete the comment with the ID `newCommentId`
-    RestAssured
-            .when()
-            .delete("/blogs/comments/" + newCommentId)
-            .then()
-            .statusCode(Status.NO_CONTENT.getStatusCode());
+        // Delete the comment with the ID `newCommentId`
+        RestAssured
+                .given()
+                .auth().oauth2(getAccessTokenAlice())
+                .when()
+                .delete("/blogs/comments/" + newCommentId)
+                .then()
+                .statusCode(Status.NO_CONTENT.getStatusCode());
     }
+
+    @Test
+    @Order(13)
+    public void unauthorizedAccess() {
+        // Simulate unauthorized user trying to access a secured resource
+        String newBlogJson = """
+                {
+                    "title": "%s",
+                    "content": "%s"
+                }
+                """.formatted(NEW_BLOG_TITLE, NEW_BLOG_CONTENT);
+        RestAssured
+                .given()
+                .body(newBlogJson)
+                .contentType(MediaType.APPLICATION_JSON)
+                .when()
+                .post("/blogs")
+                .then()
+                .statusCode(401);
+    }
+
+    @Test
+    @Order(14)
+    void updateBlog() {
+        String updatedTitle = "Updated Title";
+        String updatedContent = "Updated content.";
+
+        String updatedBlogJson = """
+                {
+                    "title": "%s",
+                    "content": "%s"
+                }
+                """.formatted(updatedTitle, updatedContent);
+
+        // Send PUT request to update the blog with newBlogId
+        RestAssured
+                .given()
+                .auth().oauth2(getAccessTokenAlice())
+                .body(updatedBlogJson)
+                .contentType(MediaType.APPLICATION_JSON)
+                .when()
+                .put("/blogs/" + newBlogId)
+                .then()
+                .statusCode(200);
+
+        // Verify the updated blog's content
+        String responseBody = RestAssured
+                .when()
+                .get("/blogs/" + newBlogId)
+                .then()
+                .statusCode(200)
+                .extract().body().asString();
+
+        JsonObject jsonBlogObject = Json.createReader(new StringReader(responseBody)).readObject();
+        Assertions.assertEquals(updatedTitle, jsonBlogObject.getString("title"));
+        Assertions.assertEquals(updatedContent, jsonBlogObject.getString("content"));
+    }
+
+    // get Token from Alice to peform the test as admin user
+    protected String getAccessTokenAlice() {
+        return keycloakClient.getAccessToken("alice", "1234", "quarkus-app");
+    }
+
 }

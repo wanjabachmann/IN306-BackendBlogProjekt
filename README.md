@@ -70,13 +70,35 @@ http://localhost:8080/q/swagger-ui
 
 
 ## httpie
+
+### Authorization
+Authorization is needed for all entries with a 🔒 needed!
+If you want to make a request on a protected path, use the option to sign in to the Keycloak:
+1. Login into Single Page Application http://localhost:8080/q/dev-ui/io.quarkus.quarkus-oidc/keycloak-provider
+2. Username: Alice / PW: 1234
+3. Copy the Access Token or click on the button "Swagger Ui" in the Test your Service Section. 
+
+
+#### Access Token & httpie
+* If you want to do a httpie request, copy the Access Token
+* Add `Authorization:"baerear AccessToken"` to the httpie command
+
+#### Swagger UI
+* If you opened the Swagger UI with the "Test your service" link you should be authorized and good to go.
+* You can check the Authorization by clicking on the Authorize Button
+
+Example:
+```Shell
+http -v POST :8080/blogs title="Blog Title" content="This is a blog content" Authorization:"bearer eyJhbGciOiJSUzI1......"
+```
+
 ### Blogs
 Get Blogs
 ```Shell
 http :8080/blogs
 ```
 
-Post Blogs
+Post Blogs 
 ```Shell
 http -v POST :8080/blogs title="Blog Title" content="This is a blog content"
 ```
@@ -362,10 +384,16 @@ components:
 
 # Changelog
 ## New
-- docs: :memo: Add Token-Auth concept
-- feat: :alien: Add Blog Overview dto
+- docs: 
+- test: :white_check_mark: Add system test to check if the authorization is working and the Update of a blog post
+- test: :passport_control: Update system tests with the oauth2 access token from the user alice
+- build: :heavy_plus_sign: Add quarkus-test-keycloak-server dependency
+- feat: :passport_control: Add authorization roles according to the concept in the readme
+- build: :heavy_plus_sign: Add quarkus-oidc-extension
 
 ## Old
+- docs: :memo: Add decribtion about Authorization and testing in the readme and update the changelog
+- feat: :alien: Add Blog Overview dto
 - feat: Add repsonse for created comments to create get the URI
 - docs: :memo: Update the readme with the changes and unfinished tasks as well as the updated httpie queries
 - test: :test_tube: Add junit tests for Author and  Comments and remove some fix some parts on the Blog tests
