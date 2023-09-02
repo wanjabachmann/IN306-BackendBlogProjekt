@@ -384,14 +384,18 @@ components:
 
 # Changelog
 ## New
-- docs: 
+- docs: :memo: Update changelog in the README file
+- feat: :wrench: Add CORS configuration
+- test: :bug: Fix the removeCommentById test and add Lifecycle per class and Order Annotation
+
+## Old
+- docs: :memo: Add decribtion about Authorization and testing in the readme and update the changelog
 - test: :white_check_mark: Add system test to check if the authorization is working and the Update of a blog post
 - test: :passport_control: Update system tests with the oauth2 access token from the user alice
 - build: :heavy_plus_sign: Add quarkus-test-keycloak-server dependency
 - feat: :passport_control: Add authorization roles according to the concept in the readme
 - build: :heavy_plus_sign: Add quarkus-oidc-extension
 
-## Old
 - docs: :memo: Add decribtion about Authorization and testing in the readme and update the changelog
 - feat: :alien: Add Blog Overview dto
 - feat: Add repsonse for created comments to create get the URI
@@ -448,4 +452,3 @@ components:
 - DTO's are implemented for all update and add methods. I tired to implement the same for the get blogs method
 but it's not visible in the Swagger UI.
 - Junit tests implemented for all entites but I was not able to get the PUT Junit tests working. 
-As well as the testRemoveCommentById :(
