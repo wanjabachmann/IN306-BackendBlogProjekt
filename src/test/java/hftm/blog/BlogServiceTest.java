@@ -7,17 +7,22 @@ import java.util.List;
 
 import org.jboss.logging.Logger;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import hftm.blog.control.BlogService;
 import hftm.blog.control.dto.BlogDtos.AddBlogDto;
 import hftm.blog.control.dto.BlogDtos.BlogOverviewDto;
-import hftm.blog.entity.Blog;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 
 @QuarkusTest
+@TestInstance(Lifecycle.PER_CLASS)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class BlogServiceTest {
     @Inject
     BlogService blogService;

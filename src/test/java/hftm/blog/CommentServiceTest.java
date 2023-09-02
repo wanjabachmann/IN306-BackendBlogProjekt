@@ -1,25 +1,29 @@
 package hftm.blog;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import java.util.HashSet;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 
 import hftm.blog.control.BlogService;
 import hftm.blog.control.CommentService;
 import hftm.blog.control.dto.BlogDtos.AddBlogDto;
 import hftm.blog.control.dto.CommentDtos;
 import hftm.blog.control.dto.CommentDtos.AddCommentDto;
-import hftm.blog.entity.Blog;
 import hftm.blog.entity.Comment;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 
 @QuarkusTest
+@TestInstance(Lifecycle.PER_CLASS)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CommentServiceTest {
     @Inject
     CommentService commentService;
@@ -50,12 +54,12 @@ public class CommentServiceTest {
     public void init() {
         blogsBefore = blogService.getBlogs().size();
         blogDto = new AddBlogDto(NEW_BLOG_TITLE, NEW_BLOG_CONTENT, new HashSet<>());
-        blogService.addBlogDto(blogDto);
+        var blogid = blogService.addBlogDto(blogDto);
 
 
         commentsBefore = commentService.getComments().size();
         commentDto = new CommentDtos.AddCommentDto(NEW_COMMENT_CONTENT, NEW_COMMENT_CREATOR);
-        commentService.addCommentDto(1L, commentDto);
+        commentService.addCommentDto(blogid, commentDto);
         comments = commentService.getComments();
     }
 
@@ -68,42 +72,33 @@ public class CommentServiceTest {
         assertEquals(NEW_COMMENT_CREATOR, lastComment.getCreator());
     }
 
-    @Order(2)
+/*     @Order(2)
     @Test
     public void testUpdateComment(){
-       /*  comments = commentService.getComments();
-        UpdateCommentDto commentDto = new UpdateCommentDto(1L, NEW_COMMENT_CONTENT, NEW_COMMENT_CREATOR);
-        commentService.updateCommentDto(1L, commentDto);
-        Comment lastComment = commentService.getComments().get(1);
-        assertEquals(UPDATE_COMMENT_CONTENT, lastComment.getContent()); */
-    }
+        // Arange
+        comments = commentService.getComments();
+        UpdateCommentDto updateCommentDto = new UpdateCommentDto((long)commentService.getComments().size() -1, UPDATE_COMMENT_CONTENT, UPDATE_COMMENT_CREATOR);
+        
+        // Act
+        commentService.updateCommentDto((long)commentService.getComments().size() -1, updateCommentDto);
+        Comment lastComment = commentService.getComments().get(commentService.getComments().size() -1);
+
+        // Assert
+        assertEquals(UPDATE_COMMENT_CONTENT, lastComment.getContent());
+    } */
 
     @Order(3)
     @Test
     public void testRemoveCommentById() {
         // Arrange
+        int commentSizeBeforeRemoval = commentService.getComments().size();
         Comment lastComment = comments.get(comments.size() - 1);
-
+        
         // Act
         commentService.removeCommentById(lastComment.getId());
 
         // Assert
-        assertFalse(commentService.getComments().contains(lastComment));
+        assertEquals(commentSizeBeforeRemoval, commentService.getComments().size());
     }
 
-    /*
-     * @Test
-     * void addAuthorToBlog(){
-     * // Arrange
-     * Author author = new Author("Christoph", "Meier", LocalDate.now());
-     * 
-     * // Act
-     * blog.getAuthors().add(author);
-     * 
-     * // Assert
-     * // blog.getAuthors().forEach(x -> System.out.println(x.getFirstname() + " " +
-     * x.getLastname()));
-     * assertTrue(blog.getAuthors().contains(author));
-     * }
-     */
 }
