@@ -327,7 +327,7 @@ public class BlogsSystemTest {
 
     // get Token from Alice to peform the test as admin user
     protected String getAccessTokenAlice() {
-        return keycloakClient.getAccessToken("alice", "1234", "quarkus-app");
+        return keycloakClient.getAccessToken("alice", "1234", "backend-service");
     }
 
 }
