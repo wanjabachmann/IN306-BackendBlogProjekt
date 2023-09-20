@@ -384,11 +384,14 @@ components:
 
 # Changelog
 ## New
+- docs: :memo: Update the changelog in the readme file
+- docs: :memo: Update the readme with the GitHub Container Image section
+- feat: :heavy_plus_sign: Add h2 for a temporary db in the memory and the configuration to create a container on package
+
+## Old
 - docs: :memo: Update changelog in the README file
 - feat: :wrench: Add CORS configuration
 - test: :bug: Fix the removeCommentById test and add Lifecycle per class and Order Annotation
-
-## Old
 - docs: :memo: Add decribtion about Authorization and testing in the readme and update the changelog
 - test: :white_check_mark: Add system test to check if the authorization is working and the Update of a blog post
 - test: :passport_control: Update system tests with the oauth2 access token from the user alice
