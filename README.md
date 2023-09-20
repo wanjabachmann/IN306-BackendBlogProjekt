@@ -382,6 +382,30 @@ components:
 
 ```
 
+# GitHub Container Image
+
+1. Pull the image from GitHub:
+```PowerShell
+docker pull ghcr.io/wanjabachmann/blogbackend:latest
+```
+
+2. Run the KeyCloak
+```PowerShell
+docker start keycloak
+```
+
+3. Run the Quarkus Image in the same network as the KeyCloak
+```PowerShell
+docker run -i --rm -p 8080:8080 --network=blog-nw ghcr.io/wanjabachmann/blogbackend:latest
+```
+
+4. Get Bearer Token
+```PowerShell
+http -v --form --auth backend-service:EgjBN26XIArDE7p524NToUFw7cji7GLz POST http://keycloak:8180/realms/blog/protocol/openid-connect/token username=alice password=1234 grant_type=password
+```
+5. Create a post with the collected Barear Token
+http -v POST :8080/blogs title="Blog Title" content="This is a blog content" Authorization:"bearer eyJhbGciOiJSUzI1NiI............................."
+
 # Changelog
 ## New
 - docs: :memo: Update changelog in the README file
