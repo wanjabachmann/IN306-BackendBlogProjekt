@@ -35,7 +35,7 @@ public class Comment {
     private LocalDate creationDate;
 
     @ManyToOne
-    @JoinColumn(name = "BLOG_COMMENT")
+    @JoinColumn(name = "blog_id")
     @JsonbTransient // Avoid serializing the 'comments' property
     private Blog blog;
 
