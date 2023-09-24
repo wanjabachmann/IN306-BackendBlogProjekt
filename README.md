@@ -394,32 +394,53 @@ docker pull ghcr.io/wanjabachmann/blogbackend:latest
 docker start keycloak
 ```
 
-3. Run the Quarkus Image in the same network as the KeyCloak
+3. Run the MySQL Container
+```PowerShell
+docker run --network blog-nw ghcr.io/wanjabachmann/blog-mysql:latest
+```
+
+4. Run the Quarkus Image in the same network as the KeyCloak
 ```PowerShell
 docker run -i --rm -p 8080:8080 --network=blog-nw ghcr.io/wanjabachmann/blogbackend:latest
 ```
 
-4. Get Bearer Token
+5. Get Request without Authentication
+```PowerShell
+http :8080/blogs
+```
+
+6. Get Barear Token
 ```PowerShell
 http -v --form --auth backend-service:EgjBN26XIArDE7p524NToUFw7cji7GLz POST http://keycloak:8180/realms/blog/protocol/openid-connect/token username=alice password=1234 grant_type=password
 ```
-5. Create a post with the collected Barear Token
-http -v POST :8080/blogs title="Blog Title" content="This is a blog content" Authorization:"bearer eyJhbGciOiJSUzI1NiI............................."
+
+7. Test POST action with Authentication
+```Shell
+http -v POST :8080/blogs title="Blog Title" content="This is a blog content" Authorization:"bearer eyJhbGciOi......"
+```
 
 # Changelog
 ## New
-- docs: :memo: Update changelog in the README file
-- feat: :wrench: Add CORS configuration
-- test: :bug: Fix the removeCommentById test and add Lifecycle per class and Order Annotation
+- docs: :memo: Update changelog and add the steps to run the system with a mysql container in the README file
+- test: :test_tube: Update the Systems tests because know we have data in the db
+- feat: :card_file_box: Add Database script and add the flyway dependecy tool
+- fix: :memo: Update @GeneratedValue with autogeneration
+- build: :heavy_plus_sign: Add MySQL dependency and remove h2
+- docs: :memo: Update the readme with the GitHub Container Image section
+- feat: :heavy_plus_sign: Add h2 for a temporary db in the memory and the configuration to create a container on package
 
 ## Old
+- Merge pull request #9 from wanjabachmann/add_tokenAuth
+- docs: :memo: Update changelog in the README file
+- Merge pull request #9 from wanjabachmann/add_tokenAuth
+- feat: :wrench: Add CORS configuration
+- test: :bug: Fix the removeCommentById test and add Lifecycle per class and Order Annotation
 - docs: :memo: Add decribtion about Authorization and testing in the readme and update the changelog
 - test: :white_check_mark: Add system test to check if the authorization is working and the Update of a blog post
 - test: :passport_control: Update system tests with the oauth2 access token from the user alice
 - build: :heavy_plus_sign: Add quarkus-test-keycloak-server dependency
 - feat: :passport_control: Add authorization roles according to the concept in the readme
 - build: :heavy_plus_sign: Add quarkus-oidc-extension
-
 - docs: :memo: Add decribtion about Authorization and testing in the readme and update the changelog
 - feat: :alien: Add Blog Overview dto
 - feat: Add repsonse for created comments to create get the URI
@@ -475,4 +496,3 @@ http -v POST :8080/blogs title="Blog Title" content="This is a blog content" Aut
 # Stuff not working / unfinished / Questions
 - DTO's are implemented for all update and add methods. I tired to implement the same for the get blogs method
 but it's not visible in the Swagger UI.
-- Junit tests implemented for all entites but I was not able to get the PUT Junit tests working. 
