@@ -37,6 +37,8 @@ public class BlogsSystemTest {
     private static final String NEW_COMMENT_CONTENT = "This is a really long Content as a test.";
 
     private int initialBlogsCount = 0;
+    private int initialAuthorCount = 0;
+    private int initialCommentCount = 0;
     private long newBlogId;
     private long newAuthorId;
     private long newCommentId;
@@ -49,11 +51,16 @@ public class BlogsSystemTest {
     @Order(1)
     void getIntitialBlogsCount() {
 
-        RestAssured
+        String initialResponseBody = RestAssured
                 .when()
                 .get("/blogs")
                 .then()
-                .statusCode(Status.NOT_FOUND.getStatusCode());
+                .statusCode(Status.OK.getStatusCode())
+                .extract().body().asString();
+
+        JsonArray initialJsonBlogsArray = Json.createReader(new StringReader(initialResponseBody)).readArray();
+        initialBlogsCount = initialJsonBlogsArray.size();
+
     }
 
     @Test
@@ -121,13 +128,18 @@ public class BlogsSystemTest {
 
     @Test
     @Order(5)
-    void getIntitialAuthorsCount() {
+    void getInitialAuthorsCount() {
 
-        RestAssured
+        String initialResponseBody = RestAssured
                 .when()
                 .get("/authors")
                 .then()
-                .statusCode(Status.NOT_FOUND.getStatusCode());
+                .statusCode(Status.OK.getStatusCode())
+                .extract().body().asString();
+
+        JsonArray initialJsonAuthorArray = Json.createReader(new StringReader(initialResponseBody)).readArray();
+        initialAuthorCount = initialJsonAuthorArray.size();
+
     }
 
     @Test
@@ -170,7 +182,7 @@ public class BlogsSystemTest {
                 .extract().body().asString();
 
         JsonArray jsonAuthorArray = Json.createReader(new StringReader(responseBody)).readArray();
-        Assertions.assertEquals(initialBlogsCount + 1, jsonAuthorArray.size());
+        Assertions.assertEquals(initialAuthorCount + 1, jsonAuthorArray.size());
     }
 
     @Test
@@ -192,9 +204,23 @@ public class BlogsSystemTest {
     /*
      * Comments
      */
-
     @Test
     @Order(9)
+    void getInitialCommentsCount() {
+
+        String initialResponseBody = RestAssured
+                .when()
+                .get("/blogs/" + newBlogId + "/comments")
+                .then()
+                .statusCode(Status.OK.getStatusCode())
+                .extract().body().asString();
+
+        JsonArray initialJsonCommentArray = Json.createReader(new StringReader(initialResponseBody)).readArray();
+        initialCommentCount = initialJsonCommentArray.size();
+    }
+
+    @Test
+    @Order(10)
     void addCommentToBlog() {
         String newCommentJson = """
                 {
@@ -223,7 +249,7 @@ public class BlogsSystemTest {
     }
 
     @Test
-    @Order(10)
+    @Order(11)
     void countCommentItems() {
         String responseBody = RestAssured
                 .when()
@@ -233,11 +259,11 @@ public class BlogsSystemTest {
                 .extract().body().asString();
 
         JsonArray jsonCommentArray = Json.createReader(new StringReader(responseBody)).readArray();
-        Assertions.assertEquals(1, jsonCommentArray.size());
+        Assertions.assertEquals(initialCommentCount + 1, jsonCommentArray.size());
     }
 
     @Test
-    @Order(11)
+    @Order(12)
     void readNewComment() {
         String responseBody = RestAssured
                 .given()
@@ -249,14 +275,14 @@ public class BlogsSystemTest {
 
         JsonArray jsonCommentArray = Json.createReader(new StringReader(responseBody)).readArray();
 
-        JsonObject jsonCommentObject = jsonCommentArray.getJsonObject(0);
+        JsonObject jsonCommentObject = jsonCommentArray.getJsonObject(jsonCommentArray.size() -1);
 
         Assertions.assertEquals(NEW_COMMENT_CONTENT, jsonCommentObject.getString("content"));
         Assertions.assertEquals(NEW_COMMENT_CREATOR, jsonCommentObject.getString("creator"));
     }
 
     @Test
-    @Order(12)
+    @Order(13)
     void removeCommentItem() {
         // Delete the comment with the ID `newCommentId`
         RestAssured
@@ -269,7 +295,7 @@ public class BlogsSystemTest {
     }
 
     @Test
-    @Order(13)
+    @Order(14)
     public void unauthorizedAccess() {
         // Simulate unauthorized user trying to access a secured resource
         String newBlogJson = """
@@ -289,7 +315,7 @@ public class BlogsSystemTest {
     }
 
     @Test
-    @Order(14)
+    @Order(15)
     void updateBlog() {
         String updatedTitle = "Updated Title";
         String updatedContent = "Updated content.";
