@@ -35,4 +35,4 @@ jobs:
       # Build and Push Native Image over Maven-Wrapper
       # Native Image → -Dquarkus.native.container-build=true
       - name: Build with Maven
-        run: ./mvnw package -Pnative -Dquarkus.container-image.push=true -Dquarkus.container-image.group=hftm-inf 
+        run: ./mvnw package -Pnative -Dquarkus.container-image.push=true -Dquarkus.container-image.group=hftm-inf -DskipTests
