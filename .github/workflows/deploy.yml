@@ -3,8 +3,8 @@ name: Re-Publish Container App
 on: [workflow_dispatch]
 
 env:
-  REVISION: d-cap-blog-backend--prod
-  RESSOURCE_GROUP: d-rg-inflab-fb
+  REVISION: ca-blogbackend-quarkus-001--vhzdpid
+  RESSOURCE_GROUP: rg-blogbackend-switzerlandnorth-prod-001
 
 jobs:
 
