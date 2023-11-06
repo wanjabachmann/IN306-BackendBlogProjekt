@@ -1,0 +1,27 @@
+name: Re-Publish Container App
+
+on: [workflow_dispatch]
+
+env:
+  REVISION: d-cap-blog-backend--prod
+  RESSOURCE_GROUP: d-rg-inflab-fb
+
+jobs:
+
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Login to Azure with Secret 
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          
+      # Deploy as Container App and Branch-Label
+      - name: Redeploy containerapp
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az config set extension.use_dynamic_install=yes_without_prompt
+            az containerapp revision restart -g ${{ env.RESSOURCE_GROUP }} --revision ${{ env.REVISION }}
